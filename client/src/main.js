@@ -3,11 +3,13 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify';
+import VueResource from "vue-resource";
 
 import { serverService } from './providers/Server';
 import { loggerService } from './providers/Logger';
 
 Vue.config.productionTip = false
+Vue.use(VueResource);
 
 new Vue({
   router,

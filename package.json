@@ -1,5 +1,5 @@
 {
-  "name": "nightwatchjs-gui",
+  "name": "e2e-tests-gui",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

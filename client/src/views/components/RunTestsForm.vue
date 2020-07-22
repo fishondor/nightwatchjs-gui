@@ -5,29 +5,40 @@
         lazy-validation
     >
         <v-row>
-            <v-col cols="12">
-                <v-radio-group v-model="formValues.runType">
-                    <v-radio
-                        :label="`Run test group`"
-                        :value="'group'"
-                    ></v-radio>
-                    <v-radio
-                        :label="`Run single test`"
-                        :value="'single'"
-                    ></v-radio>
-                </v-radio-group>
+            <v-col>
+                <v-treeview
+                v-model="selection"
+                :items="items"
+                :selection-type="'independent'"
+                selectable
+                return-object
+                open-all
+                ></v-treeview>
             </v-col>
-            <v-col v-if="formValues.runType == 'single'" cols="12">
+            <v-divider vertical></v-divider>
+            <v-col class="pa-6" cols="6">
+                <template v-if="!selection.length">
+                No nodes selected.
+                </template>
+                <template v-else>
+                <div v-for="node in selection" :key="node.id">
+                    {{ node.name }}
+                </div>
+                </template>
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col v-if="runType == 'single'" cols="12">
                 <v-radio-group v-model="formValues.selectedTest">
                     <v-radio
-                        v-for="group in tests"
-                        :key="`test_${group}`"
-                        :label="group"
-                        :value="group"
+                        v-for="test in tests"
+                        :key="`test_${test}`"
+                        :label="test"
+                        :value="test"
                     ></v-radio>
                 </v-radio-group>
             </v-col>
-            <v-col v-if="formValues.runType == 'group'" cols="12" class="grid-layout">
+            <v-col v-if="runType == 'groups'" cols="12" class="grid-layout">
                 <v-checkbox
                     v-for="group in testGroups"
                     :key="group"
@@ -39,21 +50,21 @@
             </v-col>
             <v-col cols="12" class="grid-layout">
                 <v-checkbox
-                    v-for="group in testsEnvironments"
-                    :key="group"
+                    v-for="testEnv in testsEnvironments"
+                    :key="testEnv"
                     v-model="formValues.selectedEnvironments"
-                    :label="group"
-                    :value="group"
+                    :label="testEnv"
+                    :value="testEnv"
                     hide-details
                 ></v-checkbox>
             </v-col>
             <v-col cols="12">
                 <v-radio-group v-model="formValues.selectedVariablesEnvironments">
                     <v-radio
-                        v-for="group in variablesEnvironments"
-                        :key="`variables_env_${group}`"
-                        :label="group"
-                        :value="group"
+                        v-for="envVar in variablesEnvironments"
+                        :key="`variables_env_${envVar}`"
+                        :label="envVar"
+                        :value="envVar"
                     ></v-radio>
                 </v-radio-group>
             </v-col>
@@ -75,7 +86,6 @@ import { mapState } from 'vuex'
 export default {
     data: () => ({
         formValues: {
-            runType: 'group',
             selectedTestGroups: [],
             selectedTest: false,
             selectedEnvironments: [],
@@ -83,7 +93,8 @@ export default {
         }
     }),
     props: {
-        loading: {default: false}
+        loading: {default: false},
+        runType: {default: 'groups'}
     },
     computed: {
         ...mapState({
@@ -96,9 +107,9 @@ export default {
             get(){
                 if(!this.formValues.selectedEnvironments.length)
                     return false;
-                if(this.formValues.runType == 'group' && !this.formValues.selectedTestGroups.length)
+                if(this.runType == 'groups' && !this.formValues.selectedTestGroups.length)
                     return false;
-                if(this.formValues.runType == 'single' && !this.formValues.selectedTest)
+                if(this.runType == 'single' && !this.formValues.selectedTest)
                     return false;
                 return true;
             },

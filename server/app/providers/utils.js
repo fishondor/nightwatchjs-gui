@@ -49,6 +49,7 @@ const extractEnvironments = (path) => {
 }
 
 const executeCommand = (command) => {
+    console.log("Executing command", command);
     return new Promise(
         (resolve, reject) => {
             exec(command, function(error, stdout, stderr){ resolve(stdout) });
@@ -73,11 +74,17 @@ const parseArrayURLString = (urlString) => {
     return urlString.replace(/\[|\]|'/gi,'').split(',');
 }
 
+const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 module.exports = {
     extractTestsNames,
     getDirectories,
     extractEnvironments,
     executeTestGroup,
     executeTest,
-    parseArrayURLString
+    parseArrayURLString,
+    capitalizeFirstLetter,
+    executeCommand
 }

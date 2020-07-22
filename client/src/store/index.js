@@ -8,7 +8,8 @@ export default new Vuex.Store({
         tests: [],
         testsEnvironments: [],
         variablesEnvironments: [],
-        testGroups: []
+        testGroups: [],
+        testsCronJobs: []
     },
     mutations: {
         setTests(state, tests){
@@ -22,12 +23,16 @@ export default new Vuex.Store({
         },
         setTestGroups(state, testGroups){
             state.testGroups = testGroups;
+        },
+        setTestsCronJobs(state, jobs){
+            state.testsCronJobs = jobs;
         }
     },
     getters: {
         tests: state => state.tests,
         testGroups: state => state.testGroups,
         variablesEnvironments: state => state.variablesEnvironments,
-        testsEnvironments: state => state.testsEnvironments
+        testsEnvironments: state => state.testsEnvironments,
+        testsCronJobs: state => state.testsCronJobs
     }
 })

@@ -1,3 +1,5 @@
+var path = require('path');
+
 module.exports = {
   devServer: {
     port: 4200,
@@ -12,6 +14,13 @@ module.exports = {
       .test(/\.md$/)
       .use('raw-loader')
       .loader('raw-loader')
-      .end()
+      .end();
+    config.module
+      .rule('eslint')
+      .use('eslint-loader')
+      .tap(options => {
+        options.configFile = path.resolve(__dirname, ".eslintrc.js");
+        return options;
+      })
   },
 }

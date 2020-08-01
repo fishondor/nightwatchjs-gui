@@ -10,22 +10,22 @@
           class="py-0">
           <v-list-item link>
             <v-list-item-content>
+              <v-list-item-title><router-link to="/test">Execute Test</router-link></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item link>
+            <v-list-item-content>
+              <v-list-item-title><router-link to="/cron-jobs">Cron Jobs</router-link></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item link>
+            <v-list-item-content>
+              <v-list-item-title><router-link to="/cron-jobs/new" append>New Cron Job</router-link></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item link>
+            <v-list-item-content>
               <v-list-item-title><router-link to="/about">About</router-link></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item link>
-            <v-list-item-content>
-              <v-list-item-title><router-link to="/groups">Tests Groups</router-link></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item link>
-            <v-list-item-content>
-              <v-list-item-title><router-link to="/single">Single Test</router-link></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item link>
-            <v-list-item-content>
-              <v-list-item-title><router-link to="/cron-jobs">Cron jobs</router-link></v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>

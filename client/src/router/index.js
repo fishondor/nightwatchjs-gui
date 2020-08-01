@@ -6,19 +6,14 @@ Vue.use(VueRouter)
   const routes = [
   {
     path: '/',
-    name: 'Test Groups',
-    component: () => import('../views/GroupsTest.vue'), 
-    alias: '/groups'
+    name: 'Execute Test',
+    component: () => import('../views/ExecuteTest.vue'), 
+    alias: '/test'
   },
   {
     path: '/about',
     name: 'About',
     component: () => import('../views/About.vue')
-  },
-  {
-    path: '/single',
-    name: 'Single Test',
-    component: () => import('../views/SingleTest.vue')
   },
   {
     path: '/cron-jobs',

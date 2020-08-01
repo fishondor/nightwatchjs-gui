@@ -120,11 +120,13 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState } from 'vuex';
+
+import Test from '../../../../shared/Test';
 
 import {
-    createTestCommand
-} from '../../providers/Utils'
+    createPathString
+} from '../../providers/Utils';
 
 export default {
     data: () => ({
@@ -132,7 +134,6 @@ export default {
             selectedTestGroups: [],
             selectedTest: false,
             selectedEnvironments: [],
-            selectedVariablesEnvironments: false,
             environmentVariables: [
                 {name: "", value: ""}
             ],
@@ -178,13 +179,29 @@ export default {
             return disabled;
         },
         onFormChanged: function(){
-            this.$emit('onUpdate', this.formValues);
+            try{
+                let test = this.toTestObject(this.formValues);
+                this.$emit('onUpdate', test);
+            }catch{
+                this.$emit('onUpdate', false);
+            }
         },
         runTest: async function(){
             this.loading = true;
-            let response = await this.$serverService.runTest(createTestCommand(this.formValues));
+            let response = await this.$serverService.runTest(this.toTestObject(this.formValues).getCommand());
             this.$emit('onTestResults', response);
             this.loading = false;
+        },
+        toTestObject: function(formValues){
+            let tests = formValues.type == 'groups' ? 
+                formValues.selectedTestGroups.map(group => createPathString(group)) : 
+                createPathString(formValues.selectedTest);
+            return new Test(
+                formValues.type, 
+                tests, 
+                formValues.selectedEnvironments, 
+                { environmentVariables: formValues.environmentVariables }
+            );
         }
     }
 }

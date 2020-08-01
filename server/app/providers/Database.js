@@ -1,137 +1,77 @@
-const sqlite3 = require('sqlite3');
+var Datastore = require('nedb');
 
 const Logger = require('./Logger');
 
 class DbService{
 
-    constructor(){
+    constructor(path){
         this.logger = new Logger("Database service");
+        this.db = new Datastore({ 
+            filename: path, 
+            autoload: true,
+            timestampData: true 
+        });
     }
 
-    setDbPath(path){
-        this.path = path;
-    }
-
-    connect(){
-        if(!this.path)
-            throw new Error('DB path not defined. Please init the service with setDbPath');
+    insert(document){
         return new Promise(
             (resolve, reject) => {
-                this.db = new sqlite3.Database(this.path, 
-                    err => {
-                        if(err){
-                            this.logger.error(`Cannot connect to DB. Error: ${err}`);
-                            reject();
-                            return;
-                        }
-                        resolve();
-                        this.logger.info("Connected to database");
+                this.db.insert(document, function (err, newDoc) {
+                    if(err){
+                        this.logger("Error inserting document", document, err);
+                        reject();
+                        return;
                     }
-                );
-            }
-        )
-    }
-
-    close(){
-        return new Promise(
-            (resolve, reject) => {
-                this.db.close((err) => {
-                    if (err) {
-                      this.logger.error(err.message);
-                      reject();
-                    }
-                    resolve();
-                    this.logger.info('Closed database connection.');
+                    resolve(newDoc);
                 });
             }
         )
     }
 
-    createTableCommand(tableName, tableSchemna){
+    getAll(){
         return new Promise(
             (resolve, reject) => {
-                this.db.run(
-                    `CREATE TABLE IF NOT EXISTS ${tableName}(${tableSchemna})`,
-                    (err)=> {
-                        if(err){
-                            this.logger.error(`Can not create table. Error: ${err}`)
-                            reject();
-                            return;
-                        }
-                        resolve();
-                        this.logger.info(`Table ${tableName} instantiated successfully`)
+                this.db.find({}, function (err, docs) {
+                    if(err){
+                        this.logger("Cannot get all documents", err);
+                        reject();
+                        return;
                     }
-                )
+                    resolve(docs);
+                });
             }
         )
     }
 
-    async createTable(tableName, tableSchemna){
-        await this.connect();
-        await this.createTableCommand(tableName, tableSchemna);
-        await this.close();
-    }
-
-    insert(tableSchemna, values){
-        this.connect();
-        let context = this;
+    delete(id){
         return new Promise(
             (resolve, reject) => {
-                this.db.run(`INSERT INTO ${tableSchemna} VALUES(${values.map(() => '?').join(',')})`, values,
-                    function(err){
-                        if(err){
-                            context.logger.error(`Can not insert values into DB. Error: ${err}`)
-                            reject();
-                            return;
-                        }
-                        resolve(this.lastID);
+                this.db.remove({ _id: id }, {}, function (err, numRemoved) {
+                    if(err){
+                        this.logger("Cannot delete document", id, err);
+                        reject();
+                        return;
                     }
-                );
-                this.close();
+                    resolve(numRemoved);
+                });
             }
         )
     }
 
-    getAll(tableName){
-        this.connect();
+    update(id, updateObject){
         return new Promise(
             (resolve, reject) => {
-                this.db.all(`SELECT * FROM ${tableName}`, [],
-                    (err, rows) => {
-                        if(err){
-                            this.logger.error(`Can not get rows from table ${tableName}. Error: ${err}`)
-                            reject();
-                            return;
-                        }
-                        resolve(rows);
+                this.db.update({ _id: id }, { $set: updateObject }, {returnUpdatedDocs: true}, function (err, numReplaced, updatedDoc) {
+                    if(err){
+                        this.logger("Cannot update document", id, updateObject, err);
+                        reject();
+                        return;
                     }
-                );
-                this.close();
-            }
-        )
-    }
-
-    delete(tableName, condition){
-        this.connect();
-        let context = this;
-        return new Promise(
-            (resolve, reject) => {
-                this.db.run(`DELETE FROM ${tableName} WHERE ${condition.name}${condition.operator}?`, condition.value,
-                    function(err){
-                        if(err){
-                            context.logger.error(`Can not delete from ${tableName} by ${condition.name}${condition.operator}${condition.value}. Error: ${err}`)
-                            reject();
-                            return;
-                        }
-                        resolve(this.changes);
-                    }
-                );
-                this.close();
+                    resolve(updatedDoc);
+                });
             }
         )
     }
 }
 
-let dbService = new DbService();
-
-module.exports = dbService;
+module.exports = DbService;

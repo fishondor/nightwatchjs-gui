@@ -23,12 +23,19 @@
             </v-col>
             <v-col class="flex-grow-1">
                 <v-text-field
-                    v-model="formValues.notificationEmail"
+                    v-model="formValues.notifyEmail"
                     label="Notification email"
                     outlined
                     :rules="formValidation.emailRules"
                     validate-on-blur
                 ></v-text-field>
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col>
+                <v-btn color="primary" 
+                    @click="submitForm"
+                    :loading="loading">Save and activate</v-btn>
             </v-col>
         </v-row>
     </v-form>
@@ -41,13 +48,19 @@ export default {
         formValues: {
             title: '',
             expression: '',
-            notificationEmail: ''
+            notifyEmail: ''
         },
         formValidation: {
             emailRules: [
                 v => /.+@.+\..+/.test(v) || 'Email must be valid',
             ]
-        }
+        },
+        loading: false
     }),
+    methods: {
+        submitForm: function(){
+            this.$emit('onSubmit', this.formValues);
+        },
+    }
 }
 </script>

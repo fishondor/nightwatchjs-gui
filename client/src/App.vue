@@ -8,19 +8,22 @@
     <v-footer app dark>
         <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
+    <Notification />
   </v-app>
 </template>
 
 <script>
 import NavigationDrawer from '@/views/components/NavigationDrawer';
 import AppBar from '@/views/components/AppBar';
+import Notification from '@/views/components/Notification';
 
 export default {
     name: 'App',
 
     components: {
       NavigationDrawer,
-      AppBar
+      AppBar,
+      Notification
     },
 
     data: () => ({
@@ -29,7 +32,6 @@ export default {
     created(){
         this.getTestGroups();
         this.getTestsEnvironments();
-        this.getVariablesEnvironments();
         this.getTests();
     },
     methods: {
@@ -44,10 +46,6 @@ export default {
         getTestsEnvironments: async function(){
           let testsEnvironments = await this.$serverService.getTestsEnvironments();
           this.$store.commit('setTestsEnvironments', testsEnvironments);
-        },
-        getVariablesEnvironments: async function(){
-          let variablesEnvironments = await this.$serverService.getVariablesEnvironments();
-          this.$store.commit('setVariablesEnvironments', variablesEnvironments);
         }
     }
 };

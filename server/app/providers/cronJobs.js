@@ -1,170 +1,209 @@
 var CronJobManager = require('cron-job-manager');
 
-const db = require('./Database');
+const DBService = require('./Database');
 const CronJobModel = require('../models/CronJob');
-const TestModel = require('../models/Test');
 const Logger = require('./Logger');
-
 const {
-    executeCommand
-} = require('./utils');
+    DB_FILE_PATH
+} = require('./environment');
 
-const logger = new Logger("CronJobs service");
+class CronJobsService{
 
-const cronJobManager = new CronJobManager();
+    constructor(){
+        this.logger = new Logger("CronJobs service");
+        this.cronJobManager = new CronJobManager();
+        this.db = new DBService(DB_FILE_PATH);
+    }
 
-const TESTS_ROOT_DIRECTORY = __dirname + '/../../../../';
-const DB_DIRECTORY = `${TESTS_ROOT_DIRECTORY}nightwatchjs-gui-cron`;
-const DB_FILE = `${DB_DIRECTORY}/cron_jobs.db`;
-const JOB_NAME_PREFIX = 'job_';
-
-
-const initJob = (job) => {
-    cronJobManager.add(
-        `${JOB_NAME_PREFIX}${job.job_id}`,
-        job.expression,
-        TestModel.cronCommandFunction(job.command),
-        {
-            start: true, 
-            onComplete: TestModel.cronCommandCompleteFunction
-        }
-    )
-}
-
-const deleteJob = async (job) => {
-    try{
-        let result = await db.delete(CronJobModel.dbTableName, {name: 'job_id', operator: '=', value: job.job_id});
-        if(!result){
-            logger.error(`No jobs were deleted`, job.job_id);
+    async registerJob(doc){
+        try{
+            let newDoc = await this.db.insert(doc);
+            if(!newDoc){
+                this.logger.error(`Invalid response in register job to DB: ${newDoc}`);
+                return false;
+            }
+            this.logger.info(`Successfully registered job`, newDoc);
+    
+            return newDoc;
+        }catch(err){
+            this.logger.error(`Error registering job to DB. Error: ${err}`);
             return false;
         }
-        return result;
-    }catch(err){
-        logger.error(`Cannot delete job from DB:`, job, err);
-        return false;
     }
-}
 
-const initRegisteredJobs = async () => {
-    let registerdJobs = await db.getAll(CronJobModel.dbTableName);
-    console.log("jobs", registerdJobs);
-    registerdJobs.map(
-        job => {
-            initJob(job)
-        }
-    );
-}
-
-db.setDbPath(DB_FILE);
-db.createTable(CronJobModel.dbTableName, CronJobModel.dbTableSchema)
-    .then(
-        () => {
-            initRegisteredJobs();
-        }
-    );
-
-const registerJob = async (schema, values) => {
-    try{
-        let id = await db.insert(schema, values);
-        if(!id){
-            logger.error(`Invalid response in register job to DB: ${id}`);
+    async getRegisteredJobs(){
+        try{
+            let jobs = await this.db.getAll();
+            if(!jobs){
+                this.logger.error(`Invalid response from get all jobs: ${jobs}`);
+                return false;
+            }
+            return jobs.map(job => CronJobModel.fromJSON(job));
+        }catch(err){
+            this.logger.error(`Error getting all jobs. Error: ${err}`);
             return false;
         }
-        logger.info(`Successfully registered job ${id}`);
-
-        return id;
-    }catch(err){
-        logger.error(`Error registering job to DB. Error: ${err}`);
-        return false;
     }
-}
 
-const getRegisteredJobs = async () => {
-    try{
-        let jobs = await db.getAll(CronJobModel.dbTableName);
-        if(!jobs){
-            logger.error(`Invalid response from get all jobs: ${jobs}`);
+    async deleteJob(jobId){
+        if(this.cronJobManager.exists(jobId))
+            this.cronJobManager.deleteJob(jobId);
+        try{
+            let result = await this.db.delete(jobId);
+            if(!result){
+                this.logger.error(`No jobs were deleted`, jobId);
+                return false;
+            }
+            return result;
+        }catch(err){
+            this.logger.error(`Cannot delete job from DB:`, jobId, err);
             return false;
         }
-        return jobs;
-    }catch(err){
-        logger.error(`Error registering job to DB. Error: ${err}`);
-        return false;
     }
-}
 
-const setJobsStatuses = (jobs) => {
-    let registeredJobs = cronJobManager.jobs;
-    return jobs.map(
-        job => {
-            let job_id = `${JOB_NAME_PREFIX}${job.job_id}`;
-            job['running'] = registeredJobs[job_id] ? registeredJobs[job_id].running : false;
-            return job
+    addJob(job){
+        if(this.cronJobManager.exists(job._id))
+            throw new Error(`Job ${job._id} already registered`);
+        this.cronJobManager.add(
+            job._id,
+            job.expression,
+            job.cronExecuteFunction,
+            {
+                start: false, 
+                onComplete: job.callbackFunction, 
+            }
+        );
+
+        return this.cronJobManager.listCrons();
+    }
+
+    async initRegisteredJobs(){
+        try{
+            let registeredJobs = await this.getRegisteredJobs();
+            registeredJobs.map(
+                job => {
+                    this.addJob(job);
+                    if(job.running){
+                        let running = this.jobActions.start(job._id);
+                        if(!running){
+                            this.logger.error(`Job ${job._id} did not start properly`);
+                        }
+                    }
+                }
+            )
+        }catch(error){
+            this.logger.error("Error instantiating jobs")
         }
-    );
+    }
+
+    async updateJob(id, updateObject){
+        try{
+            let updated = await this.db.update(id, updateObject);
+            if(!updated){
+                this.logger.error(`Cannot update job`, job, updateObject);
+                return false;
+            }
+            return updated;
+        }catch(err){
+            this.logger.error(`Error updating job: ${err}`);
+            return false;
+        }
+    }
+
+    isJobRunning(id){
+        let jobs = this.cronJobManager;
+        let running = jobs.jobs[id].running;
+        return running;
+    }
+
+    get jobActions(){ return {
+        stop: async (jobId) => {
+            this.cronJobManager.stop(jobId);
+
+            let status = this.isJobRunning(jobId);
+
+            if(!status){
+                let updatedDoc = await this.updateJob(jobId, {running: false});
+                if(!updatedDoc)
+                    this.logger.error("Error updating job status running to false");
+            }
+
+            return {running: status};
+        },
+        start: async (jobId) => {
+            this.cronJobManager.start(jobId);
+
+            let status = this.isJobRunning(jobId);
+
+            if(status){
+                let updatedDoc = await this.updateJob(jobId, {running: true});
+                if(!updatedDoc)
+                    this.logger.error("Error updating job status running to true");
+            }
+
+            return {running: status};
+        }
+    }}
+
 }
 
-const jobActions = {
-    stop: async (job) => {
-        cronJobManager.stop(`${JOB_NAME_PREFIX}${job.job_id}`);
-        logger.info(`Stoped job: ${job.job_id}`);
-        return {running: false};
-    },
-    start: async (job) => {
-        cronJobManager.start(`${JOB_NAME_PREFIX}${job.job_id}`);
-        logger.info(`Started job: ${job.job_id}`);
-        return {running: true};
-    },
-    delete: async (job) => {
-        await deleteJob(job);
-        await this.stop(job);
-        return true;
-    }
-}
+const cronJobsService = new CronJobsService();
 
 const api = {
     getJobs: async (req, res) => {
         try{
-            let jobs = await getRegisteredJobs();
+            let jobs = await cronJobsService.getRegisteredJobs();
             if(!jobs){
                 res.sendStatus(500);
                 return;
             }
-            let jobsWithStatuses = setJobsStatuses(jobs);
-            console.log("jobs", jobsWithStatuses);
-            res.json({jobs: jobsWithStatuses});
+            res.json({jobs: jobs});
         }catch(err){
             res.sendStatus(500);
         }
     },
 
     registerJob: async (req, res) => {
-        let job = req.body;
-        let test = new TestModel(job.test.type, job.test);
-        let cronJobObject = new CronJobModel(
-            job.expression, 
-            test.getCommand(),
-            job.title,
-            job.notifyEmail
-        );
+        let job = req.body.cronjob;
+        let cronJobObject = CronJobModel.fromJSON(job);
         try{
-            let id = await registerJob(cronJobObject.getDBInsertSchema(), cronJobObject.getDBValuesArray());
-            if(!id){
+            let newDoc = await cronJobsService.registerJob(cronJobObject);
+            if(!newDoc){
                 res.sendStatus(500);
                 return;
             }
-            res.json({jobID: id});
+
+            let registeredCronjob = CronJobModel.fromJSON(newDoc);
+            cronJobsService.addJob(registeredCronjob);
+            cronJobsService.jobActions.start(registeredCronjob);
+    
+            let updated = await cronJobsService.update(registeredCronjob._id, {running: true});
+
+            res.json({job: updated});
+        }catch(err){
+            res.sendStatus(500);
+        }
+    },
+
+    deleteJob: async (req, res) => {
+        let jobId = req.params.id;
+        try{
+            let response = await cronJobsService.deleteJob(jobId);
+            if(!response){
+                res.sendStatus(500);
+                return;
+            }
+            res.json(response);
         }catch(err){
             res.sendStatus(500);
         }
     },
 
     jobActions: async (req, res) => {
-        let job = req.body;
         let action = req.params.action;
-        console.log("Param", action);
+        let jobId = req.params.id;
         try{
-            let response = await jobActions[action](job);
+            let response = await cronJobsService.jobActions[action](jobId);
             if(!response){
                 res.sendStatus(500);
                 return;
@@ -175,5 +214,7 @@ const api = {
         }
     }
 }
+
+cronJobsService.initRegisteredJobs();
 
 module.exports = api

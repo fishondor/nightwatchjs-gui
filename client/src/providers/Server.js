@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import axios from 'axios';
 
+import CronJob from '../../../shared/CronJob';
+
 class ServerService{
 
     init(logger){
@@ -15,7 +17,7 @@ class ServerService{
             }
             return response.data;
         }catch(error){
-            console.error(error);
+            this.logger.error(error);
             return false;
         }
     }
@@ -28,7 +30,7 @@ class ServerService{
             }
             return response.data;
         }catch(error){
-            console.error(error);
+            this.logger.error(error);
             return false;
         }
     }
@@ -41,20 +43,7 @@ class ServerService{
             }
             return response.data;
         }catch(error){
-            console.error(error);
-            return false;
-        }
-    }
-
-    async getVariablesEnvironments(){
-        try{
-            let response = await axios.get('/api/variables-environments');
-            if(response.status != 200){
-                this.logger.error("Could not get variables environments: ", response.status, response.data || "");
-            }
-            return response.data;
-        }catch(error){
-            console.error(error);
+            this.logger.error(error);
             return false;
         }
     }
@@ -67,52 +56,20 @@ class ServerService{
             }
             return response.data;
         }catch(error){
-            console.error(error);
+            this.logger.error(error);
             return false;
         }
     }
 
-    async runTestGroup(groups, environments, variablesEnvironment){
+    async registerTestCronJob(cron){
         try{
-            let response = await axios.post('/api/run-test-group', {
-                groups: groups,
-                environments: environments,
-                variablesEnvironment: variablesEnvironment
-            });
-            if(response.status != 200){
-                this.logger.error("Could not run test group: ", response.status, response.data || "");
-            }
-            return response.data;
-        }catch(error){
-            console.error(error);
-            return false;
-        }
-    }
-
-    async registerTestCronJob(){
-        let test = {
-            type: 'groups',
-            tests: ['wisestamp/features'],
-            environments: ['selenium.chrome', 'selenium.firefox'],
-            args: {
-                environmentVariables: {
-                    TESTS_ENV: 'wisestamp.qa'
-                }
-            }
-        }
-        try{
-            let response = await axios.post(`/api/job`, {
-                expression: '0/4 * * * * *',
-                test: test,
-                title: 'Wisestamp features 2',
-                notifyEmail: 'ariel@vcita.com'
-            });
+            let response = await axios.post(`/api/job`, {cronjob: cron});
             if(response.status != 200){
                 this.logger.error("Could not register cron job: ", response.status, response.data || "");
             }
             return response.data;
         }catch(error){
-            console.error(error);
+            this.logger.error(error);
             return false;
         }
     }
@@ -123,49 +80,48 @@ class ServerService{
             if(response.status != 200){
                 this.logger.error("Could not get cron jobs: ", response.status, response.data || "");
             }
-            return response.data;
+            return response.data.jobs.map(job => CronJob.fromJSON(job));
         }catch(error){
-            console.error(error);
+            this.logger.error(error);
             return false;
         }
     }
 
-    async stopCronJob(job){
+    async stopCronJob(jobId){
         try{
-            let response = await axios.post('/api/job/stop', job);
+            let response = await axios.get(`/api/job/stop/${jobId}`);
             if(response.status != 200){
                 this.logger.error("Could not stop cron job: ", response.status, response.data || "");
             }
             return response.data;
         }catch(error){
-            console.error(error);
+            this.logger.error(error);
             return false;
         }
     }
 
-    async startCronJob(job){
+    async startCronJob(jobId){
         try{
-            let response = await axios.post('/api/job/start', job);
+            let response = await axios.get(`/api/job/start/${jobId}`);
             if(response.status != 200){
                 this.logger.error("Could not start cron job: ", response.status, response.data || "");
             }
             return response.data;
         }catch(error){
-            console.error(error);
+            this.logger.error(error);
             return false;
         }
     }
 
     async deleteCronJob(job){
-        console.log("deleting job", job);
         try{
-            let response = await axios.post('/api/job/delete', job);
+            let response = await axios.delete(`/api/job/${job._id}`);
             if(response.status != 200){
                 this.logger.error("Could not delete cron job: ", response.status, response.data || "");
             }
             return response.data;
         }catch(error){
-            console.error(error);
+            this.logger.error(error);
             return false;
         }
     }

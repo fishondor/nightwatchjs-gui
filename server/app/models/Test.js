@@ -1,15 +1,38 @@
-const {
-    capitalizeFirstLetter,
-    executeCommand
-} = require('../providers/utils');
+const testCommand = {
+    groups: (tests) => {
+        return `--group ${tests.join(',')}`;
+    },
+    single: (test) => {
+        return `--test ${test}`;
+    }
+}
 
 class Test{
 
-    constructor(type, test){
-        let path = `./testTypes/Test${capitalizeFirstLetter(type)}`;
-        console.log("path", path);
-        let testType = require(path);
-        return new testType(test.tests, test.environments, test.args);
+    constructor(type, tests, environments, args = {}){
+        if(!environments)
+            throw new Error('environments argument is not defined');
+        if(!tests)
+            throw new Error("Missing argument test");
+            
+        this.type = type;
+        this.tests = tests;
+        this.environments = environments;
+        this.environmentVariables = args.environmentVariables;
+    }
+
+    getCommand(){
+        let environmentVariables = this.environmentVariables.reduce(
+            (variables, item) => {
+                if(!item.name && !item.value)
+                    return variables;
+                variables += `${item.name}=${item.value} `;
+                return variables;
+            },
+            ''
+        );
+        let environments = this.environments.join(',');
+        return `${environmentVariables}node_modules/.bin/nightwatch -e ${environments} ${testCommand[this.type](this.tests)}`;
     }
 
     static cronCommandFunction(command) {
@@ -25,6 +48,15 @@ class Test{
 
     static cronCommandCompleteFunction(result) {
         console.log(`Finished job`, result);
+    }
+    
+    static fromJSON(testJSON){
+        return new Test(
+            testJSON.type,
+            testJSON.tests,
+            testJSON.environments,
+            {environmentVariables: testJSON.environmentVariables}
+        )
     }
 
 }

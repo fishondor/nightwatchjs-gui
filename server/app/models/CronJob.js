@@ -1,40 +1,55 @@
-const dbTableSchema = `job_id INTEGER PRIMARY KEY,
-expression TEXT NOT NULL,
-command TEXT NOT NULL,
-title TEXT,
-notifyEmail TEXT`;
-
-const dbTableName = 'jobs'
+/* const {
+    executeCommand
+} = require('../providers/utils'); */
+const TestModel = require('./Test');
 
 class NWCronJob{
 
-    static get dbTableSchema(){return dbTableSchema}
-
-    static get dbTableName(){return dbTableName}
-
-    constructor(expression, command, title = '', notifyEmail = []){
+    constructor(expression, test, title = '', options = {}){
         if(!expression)
             throw new Error('cron expression is not defined');
-        if(!command)
+        if(!test)
             throw new Error('command is not defined');
 
         this.expression = expression;
-        this.command = command;
+        this.test = test;
         this.title = title;
-        this.notifyEmail = notifyEmail;
+        this.notifyEmail = options.notifyEmail;
+        this._id = options.id;
+        this.running = options.running;
     }
 
-    getDBInsertSchema(){
-        return `${NWCronJob.dbTableName}(expression, command, title, notifyEmail)`;
+    get cronExecuteFunction(){
+        let testCommand = this.test.getCommand();
+        return async function(callback){
+            //let results = await executeCommand(testCommand);
+            let results = "The command result, will execute command: " + testCommand;
+            callback(results);
+        }
     }
 
-    getDBValuesArray(){
-        return [
-            this.expression,
-            this.command,
-            this.title,
-            this.notifyEmail
-        ]
+    get callbackFunction(){
+        let title = this.title;
+        let notifyEmail = this.notifyEmail;
+        return function(results){
+            console.log("Job finished");
+            console.log("Results", results);
+            console.log("Will send results to", notifyEmail);
+            console.log("Job title", title);
+        }
+    }
+
+    static fromJSON(cronjobJSON){
+        return new NWCronJob(
+            cronjobJSON.expression,
+            TestModel.fromJSON(cronjobJSON.test),
+            cronjobJSON.title,
+            {
+                notifyEmail: cronjobJSON.notifyEmail,
+                id: cronjobJSON._id,
+                running: cronjobJSON.running
+            }
+        )
     }
 
 }

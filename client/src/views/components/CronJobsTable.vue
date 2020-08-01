@@ -5,9 +5,8 @@
             :items="jobs"
             :single-expand="false"
             :expanded.sync="expanded"
-            item-key="job_id"
+            item-key="_id"
             show-expand
-            class="elevation-1"
         >
             <template v-slot:item.actions="{ item }">
                 <v-icon
@@ -27,7 +26,7 @@
             <template v-slot:expanded-item="{ headers, item }">
                 <td :colspan="headers.length">
                     <span>Command:</span>
-                    <CommandlineOutput :output="item.command" />
+                    <CommandlineOutput :output="item.test.getCommand()" :wrapText="true"/>
                     <span>{{`Notification to: ${item.notifyEmail}`}}</span>
                 </td>
             </template>
@@ -72,7 +71,7 @@ export default {
             expanded: [],
             singleExpand: false,
             headers: [
-                { text: 'ID', value: 'job_id' },
+                { text: 'ID', value: '_id' },
                 { text: 'Title', value: 'title' },
                 { text: 'Expression', value: 'expression' },
                 { text: 'Status', value: 'running' },
@@ -90,9 +89,13 @@ export default {
                 let itemsDeleted = await this.$serverService.deleteCronJob(item);
                 if(!itemsDeleted){
                     this.$loggerService.error(`No items were deleted`);
+                    this.$notificationsService.error("Could not delete item. Please refer to logs for more information");
                     return;
+                }else{
+                    this.$notificationsService.success(`Cron Job ${item.title} was deleted successfully`);
                 }
-                let cronJobs = this.jobs.filter(job => job.job_id != item.job_id);
+                
+                let cronJobs = this.jobs.filter(job => job._id != item._id);
                 this.$store.commit('setTestsCronJobs', cronJobs);
             }catch(err){
                 this.$loggerService.error(`Error deleteing job: ${err}`);
@@ -100,7 +103,16 @@ export default {
         },
         stopItem: async function(item){
             try{
-                let itemStatus = await this.$serverService.stopCronJob(item);
+                let itemStatus = await this.$serverService.stopCronJob(item._id);
+                if(!itemStatus){
+                    this.$notificationsService.error(`Error while trying to stop job ${item._id}`);
+                    return;
+                }
+                if(itemStatus.running){
+                    this.$notificationsService.error(`Could not stop job ${item._id}`);
+                    return;
+                }
+                this.$notificationsService.success(`Job ${item._id} stopped`);
                 item.running = itemStatus.running;
             }catch(err){
                 this.$loggerService.error(`Error deactivating job: ${err}`);
@@ -108,7 +120,16 @@ export default {
         },
         startItem: async function(item){
             try{
-                let itemStatus = await this.$serverService.startCronJob(item);
+                let itemStatus = await this.$serverService.startCronJob(item._id);
+                if(!itemStatus){
+                    this.$notificationsService.error(`Error while trying to start job ${item._id}`);
+                    return;
+                }
+                if(!itemStatus.running){
+                    this.$notificationsService.error(`Could not start job ${item._id}`);
+                    return;
+                }
+                this.$notificationsService.success(`Job ${item._id} started`);
                 item.running = itemStatus.running;
             }catch(err){
                 this.$loggerService.error(`Error activating job: ${err}`);

@@ -1,4 +1,4 @@
-const chalk = require('chalk');
+var chalk = require('chalk');
 
 class Logger{
 
@@ -11,11 +11,11 @@ class Logger{
     }
 
     error(...message){
-        console.error(this.name, ...message);
+        console.error(chalk.red(this.name), ...message);
     }
 
     warn(...message){
-        console.warn(this.name, ...message);
+        console.warn(chalk.yellow(this.name), ...message);
     }
 
 }

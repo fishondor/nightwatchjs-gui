@@ -2,7 +2,7 @@
     <v-container fluid class="new-cron-job-main">
         <Dashboard :output="command">
             <h3>Set cron job</h3>
-            <FormCronJob />
+            <FormCronJob @onSubmit="onCronSubmit"/>
             <h3>Set Test</h3>
             <FormTests @onUpdate="onTestUpdated" @onTestResults="setTestResults" />
         </Dashboard>
@@ -14,9 +14,7 @@ import FormTests from './components/FormTests';
 import FormCronJob from './components/FormCronJob';
 import Dashboard from './layouts/Dashboard';
 
-import {
-    createTestCommand
-} from '../providers/Utils'
+import CronJob from '../../../shared/CronJob';
 
 export default {
     components: {
@@ -28,15 +26,27 @@ export default {
         testPath: '',
         testEnvironments: '',
         test: {},
-        command: 'No output yet'
+        command: 'No valid command available yet'
     }),
     methods: {
-        onTestUpdated: function(testValues){
-            this.test = testValues;
-            this.command = createTestCommand(this.test);
+        onTestUpdated: function(test){
+            if(test){
+                this.test = test;
+                this.command = this.test.getCommand();
+            }else{
+                this.command = 'No valid command available yet'
+            }
         },
         setTestResults: function(result){
             this.command = result;
+        },
+        onCronSubmit: async function(values){
+            let cronjob = new CronJob(values.expression, this.test, values.title, {notifyEmail: values.notifyEmail});
+            let response = await this.$serverService.registerTestCronJob(cronjob);
+            if(response)
+                this.$notificationsService.success(`Cron Job ${response.job.title} was registered and activated`);
+            else
+                this.$notificationsService.error("Could not register item. Please refer to logs for more information");
         }
     }
 }

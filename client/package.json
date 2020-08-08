@@ -14,6 +14,7 @@
     "vue-resource": "^1.5.1",
     "vue-router": "^3.2.0",
     "vue-showdown": "^2.4.1",
+    "vue-splitpane": "^1.0.6",
     "vuetify": "^2.2.11",
     "vuex": "^3.4.0"
   },

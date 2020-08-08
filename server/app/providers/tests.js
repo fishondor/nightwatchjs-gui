@@ -4,7 +4,9 @@ const { TreeView } = require('node-treeview');
 
 const Logger = require('./Logger');
 const {
-    TESTS_ROOT_DIRECTORY
+    TESTS_ROOT_DIRECTORY,
+    TESTS_DIRECTORY,
+    CONFIG_FILE_PATH
 } = require('./environment');
 
 var ansi_up = new AU.default;
@@ -28,9 +30,8 @@ const api = {
     },
 
     getTestsTreeView: async (req, res) => {
-        let root = path.join(TESTS_ROOT_DIRECTORY, 'tests');
         try {
-            let tree = await new TreeView({relative: true}).process(root);
+            let tree = await new TreeView({relative: true}).process(TESTS_DIRECTORY);
             res.json(tree);
         } catch (error) {
             logger.error("Error getting tree", error);
@@ -39,7 +40,7 @@ const api = {
     },
     
     getTestEnvironments: (req, res) => {
-        let environments = require(`${TESTS_ROOT_DIRECTORY}/nightwatch.conf.js`).test_settings;
+        let environments = require(CONFIG_FILE_PATH).test_settings;
         res.status(200).send(Object.keys(environments));
     }
 }

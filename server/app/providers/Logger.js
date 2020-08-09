@@ -7,7 +7,7 @@ class Logger{
     }
 
     info(...message){
-        console.log(this.name, ...message);
+        console.log(chalk.green(this.name), ...message);
     }
 
     error(...message){

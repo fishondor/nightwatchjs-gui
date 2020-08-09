@@ -16,9 +16,9 @@ class DbService{
     insert(document){
         return new Promise(
             (resolve, reject) => {
-                this.db.insert(document, function (err, newDoc) {
+                this.db.insert(document, (err, newDoc) => {
                     if(err){
-                        this.logger("Error inserting document", document, err);
+                        this.logger.error("Error inserting document", document, err);
                         reject();
                         return;
                     }
@@ -33,7 +33,7 @@ class DbService{
             (resolve, reject) => {
                 this.db.find({}, function (err, docs) {
                     if(err){
-                        this.logger("Cannot get all documents", err);
+                        this.logger.error("Cannot get all documents", err);
                         reject();
                         return;
                     }
@@ -48,7 +48,7 @@ class DbService{
             (resolve, reject) => {
                 this.db.remove({ _id: id }, {}, function (err, numRemoved) {
                     if(err){
-                        this.logger("Cannot delete document", id, err);
+                        this.logger.error("Cannot delete document", id, err);
                         reject();
                         return;
                     }
@@ -63,7 +63,7 @@ class DbService{
             (resolve, reject) => {
                 this.db.update({ _id: id }, { $set: updateObject }, {returnUpdatedDocs: true}, function (err, numReplaced, updatedDoc) {
                     if(err){
-                        this.logger("Cannot update document", id, updateObject, err);
+                        this.logger.error("Cannot update document", id, updateObject, err);
                         reject();
                         return;
                     }

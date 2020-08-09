@@ -111,8 +111,10 @@ class CronJobsService{
     }
 
     isJobRunning(id){
-        let jobs = this.cronJobManager;
-        let running = jobs.jobs[id].running;
+        let manager = this.cronJobManager;
+        if(!manager.jobs || !manager.jobs[id])
+            return false;
+        let running = manager.jobs[id].running;
         return running;
     }
 
@@ -175,9 +177,9 @@ const api = {
 
             let registeredCronjob = CronJobModel.fromJSON(newDoc);
             cronJobsService.addJob(registeredCronjob);
-            cronJobsService.jobActions.start(registeredCronjob);
+            cronJobsService.jobActions.start(registeredCronjob._id);
     
-            let updated = await cronJobsService.update(registeredCronjob._id, {running: true});
+            let updated = await cronJobsService.updateJob(registeredCronjob._id, {running: true});
 
             res.json({job: updated});
         }catch(err){

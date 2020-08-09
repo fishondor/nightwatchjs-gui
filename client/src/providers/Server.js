@@ -69,7 +69,7 @@ class ServerService{
             }
             return response.data;
         }catch(error){
-            this.logger.error(error);
+            this.logger.error("Error registering job", error);
             return false;
         }
     }

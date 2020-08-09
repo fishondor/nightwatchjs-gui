@@ -2,16 +2,16 @@ import Vue from 'vue';
 
 class LoggerService{
 
-    info(message){
-        console.log(message);
+    info(...message){
+        console.log(...message);
     }
 
-    warn(message){
-        console.warn(message);
+    warn(...message){
+        console.warn(...message);
     }
 
-    error(message){
-        console.error(message);
+    error(...message){
+        console.error(...message);
     }
 
 }

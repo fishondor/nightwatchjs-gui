@@ -22,39 +22,43 @@
                 <v-row v-if="formValues.type=='groups'">
                     <v-col>
                         <h4>Available test groups</h4>
-                        <v-treeview
-                            v-model="formValues.selectedTestGroups"
-                            :items="testGroups"
-                            selection-type="independent"
-                            selectable
-                            return-object
-                            item-children="nodes"
-                            item-key="pathname"
-                            item-disabled="disabled"
-                            @input="onFormChanged"
-                        ></v-treeview>
+                        <div v-for="item in testGroups" :key="'testgroup' + item.name">
+                            <v-treeview
+                                v-model="formValues.selectedTestGroups"
+                                :items="item.items"
+                                selection-type="independent"
+                                selectable
+                                return-object
+                                item-children="nodes"
+                                item-key="pathname"
+                                item-disabled="disabled"
+                                @input="onFormChanged"
+                            ></v-treeview>
+                        </div>
                     </v-col>
                 </v-row>
                 <v-row v-if="formValues.type=='single'">
                     <v-col>
                         <h4>Available tests</h4>
                         <v-radio-group v-model="formValues.selectedTest" v-on:change="onFormChanged">
-                            <v-treeview
-                                activatable
-                                color="info"
-                                :items="tests"
-                                item-children="nodes"
-                                return-object
-                                item-key="pathname"
-                            >
-                                <template v-slot:prepend="{ item }">
-                                    <v-radio
-                                        :label="''"
-                                        :value="item"
-                                        :disabled="item.disabled"
-                                    ></v-radio>
-                                </template>
-                            </v-treeview>
+                            <div v-for="item in tests" :key="'test-' + item.name">
+                                <v-treeview
+                                    activatable
+                                    color="info"
+                                    :items="item.items"
+                                    item-children="nodes"
+                                    return-object
+                                    item-key="pathname"
+                                >
+                                    <template v-slot:prepend="{ item }">
+                                        <v-radio
+                                            :label="''"
+                                            :value="item"
+                                            :disabled="item.disabled"
+                                        ></v-radio>
+                                    </template>
+                                </v-treeview>
+                            </div>
                         </v-radio-group>
                     </v-col>
                 </v-row>
@@ -143,8 +147,32 @@ export default {
     }),
     computed: {
         ...mapState({
-            tests: function(state){return this.disableItemsByType(state.tests, 'dir')},
-            testGroups: function(state){return this.disableItemsByType(state.testGroups, 'file')},
+            tests: function(state){
+                let tests = Object.keys(state.tests).reduce(
+                    (folders, folder) => {
+                        folders.push({
+                            name: folder,
+                            items: this.disableItemsByType(state.tests[folder], 'dir')
+                        });
+                        return folders;
+                    },
+                    []
+                )
+                return tests
+            },
+            testGroups: function(state){
+                let groups = Object.keys(state.testGroups).reduce(
+                    (folders, folder) => {
+                        folders.push({
+                            name: folder,
+                            items: this.disableItemsByType(state.testGroups[folder], 'file')
+                        });
+                        return folders;
+                    },
+                    []
+                )
+                return groups;
+            },
             variablesEnvironments: state => state.variablesEnvironments,
             testsEnvironments: state => state.testsEnvironments
         }),

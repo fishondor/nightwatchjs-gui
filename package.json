@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:local": "ENV=dev concurrently --kill-others \"npm run serve-api-watch\" \"npm run serve-client\"",
-    "serve-api-watch": "nodemon server/app/server.js",
+    "serve-api-watch": "nodemon server/start-server.js",
     "serve-client": "cd client && npm run serve"
   },
   "author": "",

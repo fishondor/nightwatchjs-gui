@@ -4,10 +4,10 @@ const { TreeView } = require('node-treeview');
 
 const Logger = require('./Logger');
 const {
-    TESTS_ROOT_DIRECTORY,
-    TESTS_DIRECTORY,
-    CONFIG_FILE_PATH
-} = require('./environment');
+    PROJECT_ROOT_DIRECTORY,
+    TESTS_DIRECTORIES,
+    TESTS_ENVIRONMENTS
+} = require('./Constants')();
 
 var ansi_up = new AU.default;
 
@@ -18,7 +18,7 @@ const {
 const logger = new Logger('Tests service');
 
 const runTest = async (test) => {
-    let result = await executeCommand(`cd ${TESTS_ROOT_DIRECTORY} && ` + test);
+    let result = await executeCommand(`cd ${PROJECT_ROOT_DIRECTORY} && ` + test);
     return ansi_up.ansi_to_html(result);
 }
 
@@ -30,18 +30,26 @@ const api = {
     },
 
     getTestsTreeView: async (req, res) => {
-        try {
-            let tree = await new TreeView({relative: true}).process(TESTS_DIRECTORY);
-            res.json(tree);
-        } catch (error) {
-            logger.error("Error getting tree", error);
-            res.sendStatus(500);
-        }
+        let treeView = new TreeView({relative: true});
+        let treeViews = await TESTS_DIRECTORIES.reduce(
+            async (trees, path) => {
+                try {
+                    let directory = path.replace(PROJECT_ROOT_DIRECTORY, '');
+                    trees[directory] = await treeView.process(path);
+                    return trees;
+                } catch (error) {
+                    logger.error("Error getting tree", error);
+                    res.sendStatus(500);
+                    return;
+                }
+            },
+            {}
+        );
+        res.json(treeViews);
     },
     
     getTestEnvironments: (req, res) => {
-        let environments = require(CONFIG_FILE_PATH).test_settings;
-        res.status(200).send(Object.keys(environments));
+        res.status(200).send(Object.keys(TESTS_ENVIRONMENTS));
     }
 }
 

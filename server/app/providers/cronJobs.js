@@ -5,7 +5,7 @@ const CronJobModel = require('../models/CronJob');
 const Logger = require('./Logger');
 const {
     DB_FILE_PATH
-} = require('./environment');
+} = require('./Constants')();
 
 class CronJobsService{
 

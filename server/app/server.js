@@ -3,29 +3,38 @@ const http = require('http');
 const bodyParser = require('body-parser');
 const path = require('path');
 
-const api = require('./api');
 const Logger = require('./providers/Logger');
 
 const logger = new Logger('Server');
 
-const app = express();
+class NWGUIServer{
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-
-app.use('/api', api);
-
-app.use(express.static(path.join(__dirname, '../../client/dist')));
-
-app.route('/*').get(
-    (req, res) => {
-        res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+    constructor(args = {}){
+        this.app = express();
+        this.port = args.port || '8080';
     }
-)
 
-const port = process.env.PORT || '8080';
-app.set('port', port);
+    start(){
+        this.app.use(bodyParser.json());
+        this.app.use(bodyParser.urlencoded({ extended: false }));
 
-const server = http.createServer(app);
+        this.app.use('/api', require('./api'));
+        
+        this.app.use(express.static(path.join(__dirname, '../../client/dist')));
+        
+        this.app.route('/*').get(
+            (req, res) => {
+                res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+            }
+        );
 
-server.listen(port, () => logger.info(`API listening on ${port}`));
+        this.app.set('port', this.port);
+
+        this.server = http.createServer(this.app);
+
+        this.server.listen(this.port, () => logger.info(`API listening on ${this.port}`));
+    }
+
+}
+
+module.exports = NWGUIServer;

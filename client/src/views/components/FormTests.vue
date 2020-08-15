@@ -23,6 +23,7 @@
                     <v-col>
                         <h4>Available test groups</h4>
                         <div v-for="item in testGroups" :key="'testgroup' + item.name">
+                            <p>{{item.name}}</p>
                             <v-treeview
                                 v-model="formValues.selectedTestGroups"
                                 :items="item.items"
@@ -42,6 +43,7 @@
                         <h4>Available tests</h4>
                         <v-radio-group v-model="formValues.selectedTest" v-on:change="onFormChanged">
                             <div v-for="item in tests" :key="'test-' + item.name">
+                                <p>{{item.name}}</p>
                                 <v-treeview
                                     activatable
                                     color="info"
@@ -148,30 +150,24 @@ export default {
     computed: {
         ...mapState({
             tests: function(state){
-                let tests = Object.keys(state.tests).reduce(
-                    (folders, folder) => {
-                        folders.push({
-                            name: folder,
-                            items: this.disableItemsByType(state.tests[folder], 'dir')
-                        });
-                        return folders;
-                    },
-                    []
+                return state.tests.map(
+                    test => {
+                        return {
+                            name: test.name,
+                            items: this.disableItemsByType(test.items, 'dir')
+                        }
+                    }
                 )
-                return tests
             },
             testGroups: function(state){
-                let groups = Object.keys(state.testGroups).reduce(
-                    (folders, folder) => {
-                        folders.push({
-                            name: folder,
-                            items: this.disableItemsByType(state.testGroups[folder], 'file')
-                        });
-                        return folders;
-                    },
-                    []
+                return state.testGroups.map(
+                    group => {
+                        return {
+                            name: group.name,
+                            items: this.disableItemsByType(group.items, 'file')
+                        }
+                    }
                 )
-                return groups;
             },
             variablesEnvironments: state => state.variablesEnvironments,
             testsEnvironments: state => state.testsEnvironments

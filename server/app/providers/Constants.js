@@ -38,7 +38,7 @@ class ConstantsService{
         let config = require(this.configFilePath);
 
         if(config.src_folders && Array.isArray(config.src_folders) && config.src_folders.length)
-            this.TESTS_DIRECTORIES = config.src_folders;
+            this.TESTS_DIRECTORIES = config.src_folders.map(item => `${PROJECT_ROOT_DIRECTORY}/${item}`);
 
         this.TESTS_DIRECTORIES.map(
             directory => {

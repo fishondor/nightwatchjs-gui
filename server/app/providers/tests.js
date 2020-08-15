@@ -1,4 +1,3 @@
-const path = require('path');
 var AU = require('ansi_up');
 const { TreeView } = require('node-treeview');
 
@@ -31,20 +30,22 @@ const api = {
 
     getTestsTreeView: async (req, res) => {
         let treeView = new TreeView({relative: true});
-        let treeViews = await TESTS_DIRECTORIES.reduce(
-            async (trees, path) => {
-                try {
-                    let directory = path.replace(PROJECT_ROOT_DIRECTORY, '');
-                    trees[directory] = await treeView.process(path);
-                    return trees;
-                } catch (error) {
-                    logger.error("Error getting tree", error);
-                    res.sendStatus(500);
-                    return;
-                }
-            },
-            {}
-        );
+        let treeViews = [];
+        for(let i = 0; i < TESTS_DIRECTORIES.length; i++){
+            let path = TESTS_DIRECTORIES[i];
+            try {
+                let directory = path.replace(PROJECT_ROOT_DIRECTORY, '');
+                let items = await treeView.process(path)
+                treeViews.push({
+                    name: directory,
+                    items: items
+                });
+            } catch (error) {
+                logger.error("Error getting tree", error);
+                res.sendStatus(500);
+                return;
+            }
+        }
         res.json(treeViews);
     },
     

@@ -22,7 +22,7 @@
                 <v-row v-if="formValues.type=='groups'">
                     <v-col>
                         <h4>Available test groups</h4>
-                        <div v-for="item in testGroups" :key="'testgroup' + item.name">
+                        <div v-for="item in testGroups" :key="'testgroup-' + item.name">
                             <p>{{item.name}}</p>
                             <v-treeview
                                 v-model="formValues.selectedTestGroups"

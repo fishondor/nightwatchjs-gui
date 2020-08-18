@@ -22,10 +22,10 @@
                 <v-row v-if="formValues.type=='groups'">
                     <v-col>
                         <h4>Available test groups</h4>
-                        <div v-for="item in testGroups" :key="'testgroup-' + item.name">
+                        <div v-for="(item, index) in testGroups" :key="'testgroup-' + item.name">
                             <p>{{item.name}}</p>
                             <v-treeview
-                                v-model="formValues.selectedTestGroups"
+                                v-model="formValues.selectedTestGroups[index]"
                                 :items="item.items"
                                 selection-type="independent"
                                 selectable
@@ -218,7 +218,13 @@ export default {
         },
         toTestObject: function(formValues){
             let tests = formValues.type == 'groups' ? 
-                formValues.selectedTestGroups.map(group => createPathString(group)) : 
+                formValues.selectedTestGroups.reduce(
+                    (accumulator, currentItem) => {
+                        let testGroup = currentItem.map(group => createPathString(group))
+                        return accumulator.concat(testGroup);
+                    },
+                    []
+                ) : 
                 createPathString(formValues.selectedTest);
             return new Test(
                 formValues.type, 

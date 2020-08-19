@@ -1,20 +1,30 @@
 {
-  "name": "e2e-tests-gui",
+  "name": "nightwatchjs-gui",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "NightwatchJSGUI.js",
+  "bin": {
+    "nightwatchjs-gui": "./bin/index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:local": "ENV=dev concurrently --kill-others \"npm run serve-api-watch\" \"npm run serve-client\"",
     "serve-api-watch": "nodemon server/start-server.js",
-    "serve-client": "cd client && npm run serve"
+    "serve-client": "cd client && npm run serve",
+    "build:client": "cd client && npm install && npm run build",
+    "build:server": "cd server && npm install",
+    "postinstall": "npm run build:client && npm run build:server"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Ariel Fisher",
+  "license": "MIT",
+  "homepage": "https://github.com/fishondor/nightwatch-gui",
   "devDependencies": {
     "@vue/cli": "^4.4.6",
     "@vue/cli-service-global": "^4.4.6",
     "concurrently": "^5.2.0",
     "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "yargs": "^15.4.1"
   }
 }

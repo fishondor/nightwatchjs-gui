@@ -1,3 +1,8 @@
 #!/usr/bin/env node
+const {
+    argv
+} = require('yargs');
 
-require('../server/app/server');
+var NWJSGUI = require('../NightwatchJSGUI');
+
+new NWJSGUI(argv);

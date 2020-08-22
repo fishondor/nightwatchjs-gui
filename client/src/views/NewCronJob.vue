@@ -41,7 +41,7 @@ export default {
             this.command = result;
         },
         onCronSubmit: async function(values){
-            let cronjob = new CronJob(values.expression, this.test, values.title, {notifyEmail: values.notifyEmail});
+            let cronjob = new CronJob(values.expression, this.test, values.title, {tags: values.tags});
             let response = await this.$serverService.registerTestCronJob(cronjob);
             if(response)
                 this.$notificationsService.success(`Cron Job ${response.job.title} was registered and activated`);

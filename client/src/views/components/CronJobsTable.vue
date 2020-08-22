@@ -8,6 +8,11 @@
             item-key="_id"
             show-expand
         >
+            <template v-slot:item.tags="{ item }">
+                <v-chip v-for="tag in item.tags" :key="tag" class="mr-1" color="primary">
+                    {{tag}}
+                </v-chip>
+            </template>
             <template v-slot:item.actions="{ item }">
                 <v-icon
                     small
@@ -25,9 +30,7 @@
             </template>
             <template v-slot:expanded-item="{ headers, item }">
                 <td :colspan="headers.length">
-                    <span>Command:</span>
                     <CommandlineOutput :output="item.test.getCommand()" :wrapText="true"/>
-                    <span>{{`Notification to: ${item.notifyEmail}`}}</span>
                 </td>
             </template>
             <template v-slot:item.running="{ item }">
@@ -74,6 +77,7 @@ export default {
                 { text: 'ID', value: '_id' },
                 { text: 'Title', value: 'title' },
                 { text: 'Expression', value: 'expression' },
+                { text: 'Tags', value: 'tags'},
                 { text: 'Status', value: 'running' },
                 { text: '', value: 'actions' },
                 { text: '', value: 'data-table-expand' },

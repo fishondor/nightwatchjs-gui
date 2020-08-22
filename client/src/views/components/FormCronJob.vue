@@ -22,13 +22,17 @@
                 ></v-text-field>
             </v-col>
             <v-col class="flex-grow-1">
-                <v-text-field
-                    v-model="formValues.notifyEmail"
-                    label="Notification email"
+                <v-combobox
+                    v-model="formValues.tags"
+                    :items="cronjobsTags"
+                    label="Tags (will be used for finished callback)"
+                    @change="onFormChanged"
+                    multiple
+                    small-chips
                     outlined
-                    :rules="formValidation.emailRules"
-                    validate-on-blur
-                ></v-text-field>
+                    deletable-chips
+                    clearable
+                ></v-combobox>
             </v-col>
         </v-row>
         <v-row>
@@ -42,21 +46,24 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 
 export default {
     data: () => ({
         formValues: {
             title: '',
             expression: '',
-            notifyEmail: ''
-        },
-        formValidation: {
-            emailRules: [
-                v => /.+@.+\..+/.test(v) || 'Email must be valid',
-            ]
+            tags: []
         },
         loading: false
     }),
+    computed: {
+        ...mapState({
+            cronjobsTags: state => state.testsCronJobs.reduce((prev, current) => {
+                return prev.concat(current.tags);
+            }, [])
+        })
+    },
     methods: {
         submitForm: function(){
             this.$emit('onSubmit', this.formValues);

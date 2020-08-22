@@ -14,27 +14,28 @@ class NWCronJob{
         this.expression = expression;
         this.test = test;
         this.title = title;
-        this.notifyEmail = options.notifyEmail;
+        this.tags = options.tags;
         this._id = options.id;
         this.running = options.running;
     }
 
     get cronExecuteFunction(){
         let testCommand = this.test.getCommand();
+        let context = this;
         return async function(callback){
             //let results = await executeCommand(testCommand);
             let results = "The command result, will execute command: " + testCommand;
-            callback(results);
+            callback(results, context);
         }
     }
 
     get callbackFunction(){
         let title = this.title;
-        let notifyEmail = this.notifyEmail;
+        let tags = this.tags;
         return function(results){
             console.log("Job finished");
             console.log("Results", results);
-            console.log("Will send results to", notifyEmail);
+            console.log("Tags", tags);
             console.log("Job title", title);
         }
     }
@@ -45,7 +46,7 @@ class NWCronJob{
             TestModel.fromJSON(cronjobJSON.test),
             cronjobJSON.title,
             {
-                notifyEmail: cronjobJSON.notifyEmail,
+                tags: cronjobJSON.tags,
                 id: cronjobJSON._id,
                 running: cronjobJSON.running
             }

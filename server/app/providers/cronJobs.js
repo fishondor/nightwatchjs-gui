@@ -4,7 +4,8 @@ const DBService = require('./Database');
 const CronJobModel = require('../models/CronJob');
 const Logger = require('./Logger');
 const {
-    DB_FILE_PATH
+    DB_FILE_PATH,
+    CRONJOB_CALLBACK
 } = require('./Constants')();
 
 class CronJobsService{
@@ -64,13 +65,16 @@ class CronJobsService{
     addJob(job){
         if(this.cronJobManager.exists(job._id))
             throw new Error(`Job ${job._id} already registered`);
+        let logger = this.logger;
         this.cronJobManager.add(
             job._id,
             job.expression,
             job.cronExecuteFunction,
             {
                 start: false, 
-                onComplete: job.callbackFunction, 
+                onComplete: CRONJOB_CALLBACK || function(results, cronjob){
+                    logger.info(`Cronjob ${cronjob._id} is complete`, `Results: ${results}`, `Cronjob: ${JSON.stringify(cronjob)}`);
+                }, 
             }
         );
 

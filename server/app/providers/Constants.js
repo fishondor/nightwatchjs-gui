@@ -23,6 +23,7 @@ class ConstantsService{
         this.PROJECT_ROOT_DIRECTORY = PROJECT_ROOT_DIRECTORY;
         this.DB_FILE_PATH = DB_FILE_PATH;
         this.TESTS_DIRECTORIES = TESTS_DIRECTORIES;
+        this.CRONJOB_CALLBACK_FUNCTION = false;
         this.setProperties(constants);
     }
 
@@ -54,16 +55,27 @@ class ConstantsService{
             throw new Error('Tests settings is not defined in config file');
 
         this.TESTS_ENVIRONMENTS = config.test_settings;
+        
+        if (typeof constants.cronjobCallback === 'function') {
+            this.CRONJOB_CALLBACK = constants.cronjobCallback;
+        }else if(typeof constants.cronjobCallback === 'string') {
+            if(!fs.existsSync(constants.cronjobCallback))
+                throw new Error(`Argument cronjobCallback: ${constants.cronjobCallback} is not a valid path`);
+            
+            this.CRONJOB_CALLBACK = require(constants.cronjobCallback);
+            if(typeof this.CRONJOB_CALLBACK !== 'function')
+                throw new Error(`Exported callback must be of type function. file ${constants.cronjobCallback} exports type ${typeof this.CRONJOB_CALLBACK}`);
+        }
     }
 
 }
 
 var constantsService = false;
 
-var getInstance = (arguments, moshe) => {
+var getInstance = (args) => {
     if(!constantsService)
-        constantsService = new ConstantsService(arguments);
-    else if(arguments)
+        constantsService = new ConstantsService(args);
+    else if(args)
         logger.warn(`Constants service was called with arguments but already instantiated. Service will keep using ${constantsService.configFilePath}`);
     return constantsService;
 }

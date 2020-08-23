@@ -47,3 +47,8 @@ Nightwatch GUI will call this function with arguments:
 
 #### <a name="dbFilePath"></a>dbFilePath
 Nightwatch GUI uses [nedb](https://www.npmjs.com/package/nedb) library for DB management. The data will be saved to the file specified in this argument.
+
+## Development
+* Clone this repo (recommended into a nightwatch js project)
+* run `npm run start:local` - this will start local server on port `8080` and vue.js project on port `4200`
+* Open `localhost:4200`

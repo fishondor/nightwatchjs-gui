@@ -1,157 +1,48 @@
-# An h1 header
+# NightwatchJS GUI
 
-Paragraphs are separated by a blank line.
+Run tests, create and manage cronjobs for automatic e2e tests from GUI.
+Backend uses express.
+Frontend uses Vue.js
 
-2nd paragraph. _Italic_, **bold**, and `monospace`. Itemized lists
-look like:
+## Using
 
-- this one
-- that one
-- the other one
+Start server from command line: `nightwatchjs-gui` from your project root folder. `node_modules/.bin/nightwatchjs-gui` if the package is installed locally.
+Example:
+`node_modules/.bin/nightwatchjs-gui --port=4600`
 
-Note that --- not considering the asterisk --- the actual text
-content starts at 4-columns in.
+Start from js script: 
+```javascript
+const NightwatchJSGUI = require('nightwatchjs-gui');
 
-> Block quotes are
-> written like so.
->
-> They can span multiple paragraphs,
-> if you like.
-
-Use 3 dashes for an em-dash. Use 2 dashes for ranges (ex., "it's all
-in chapters 12--14"). Three dots ... will be converted to an ellipsis.
-Unicode is supported. ☺
-
-## An h2 header
-
-Here's a numbered list:
-
-1.  first item
-2.  second item
-3.  third item
-
-Note again how the actual text starts at 4 columns in (4 characters
-from the left side). Here's a code sample:
-
-    # Let me re-iterate ...
-    for i in 1 .. 10 { do-something(i) }
-
-As you probably guessed, indented 4 spaces. By the way, instead of
-indenting the block, you can use delimited blocks, if you like:
-
-```
-define foobar() {
-    print "Welcome to flavor country!";
+var args = {
+    port: 4600,
+    configFilePath: '/var/www/html/e2e-tests/config.conf.js',
+    dbFilePath: '/var/www/html/e2e-tests/gui-db/gui.db',
+    cronjobCallback: (result, cronjob) => {
+        //Get predefined emails by cronjobs tags and send the results
+        let emails = getMailsByTags(cronjob.tags);
+        emailService.send(emails, result);
+    }
 }
+
+var nightwatchJSGUI = new NightwatchJSGUI(args);
 ```
 
-(which makes copying & pasting easier). You can optionally mark the
-delimited block for Pandoc to syntax highlight it:
+### Options
+**Name**|**Description**|**Type**|**Default**
+-----|-----|-----|-----
+port|The port for the server to expose|String|8080
+configFilePath|Path to nightwatch configuration file. [Nightwatch documentation](https://nightwatchjs.org/gettingstarted/configuration/) [Read more](#configFilePath)|String|./nightwatch.conf.js OR nightwatch.json
+dbFilePath|This is where db file will be created [Read more](#dbFilePath)|String|./nightwatchjs-gui-db/cron\_jobs.db
+cronjobCallback|A callback function to run when test cronjob is done or a path to a file that exports this function [Read more](#cronjobCallback)|Function/String|System will log the result to console
 
-```python
-import time
-# Quick, count to ten!
-for i in range(10):
-    # (but not *too* quick)
-    time.sleep(0.5)
-    print i
-```
+#### <a name="configFilePath"></a>configFilePath
+Absolute path to your nightwatch project config file. This will be used to extract the paths to tests folders and testing environments (selenium etc.). Tests folders must be defined in this file although this property is optional for nightwatch, this is the way nightwatch-gui will know how to list your tests and tests groups.
 
-### An h3 header
+#### <a name="cronjobCallback"></a>cronjobCallback
+Nightwatch GUI will call this function with arguments:
+-   results - The test results parsed from stdout
+-   cronjob - The cronjob object that was executed
 
-Now a nested list:
-
-1.  First, get these ingredients:
-
-    - carrots
-    - celery
-    - lentils
-
-2.  Boil some water.
-
-3.  Dump everything in the pot and follow
-    this algorithm:
-
-        find wooden spoon
-        uncover pot
-        stir
-        cover pot
-        balance wooden spoon precariously on pot handle
-        wait 10 minutes
-        goto first step (or shut off burner when done)
-
-    Do not bump wooden spoon or it will fall.
-
-Notice again how text always lines up on 4-space indents (including
-that last line which continues item 3 above).
-
-Here's a link to [a website](http://foo.bar), to a [local
-doc](local-doc.html), and to a [section heading in the current
-doc](#an-h2-header). Here's a footnote [^1].
-
-[^1]: Footnote text goes here.
-
-Tables can look like this:
-
-size material color
-
----
-
-9 leather brown
-10 hemp canvas natural
-11 glass transparent
-
-Table: Shoes, their sizes, and what they're made of
-
-(The above is the caption for the table.) Pandoc also supports
-multi-line tables:
-
----
-
-keyword text
-
----
-
-red Sunsets, apples, and
-other red or reddish
-things.
-
-green Leaves, grass, frogs
-and other things it's
-not easy being.
-
----
-
-A horizontal rule follows.
-
----
-
-Here's a definition list:
-
-apples
-: Good for making applesauce.
-oranges
-: Citrus!
-tomatoes
-: There's no "e" in tomatoe.
-
-Again, text is indented 4 spaces. (Put a blank line between each
-term/definition pair to spread things out more.)
-
-Here's a "line block":
-
-| Line one
-| Line too
-| Line tree
-
-and images can be specified like so:
-
-![example image](example-image.jpg "An exemplary image")
-
-Inline math equations go in like so: $\omega = d\phi / dt$. Display
-math should get its own line and be put in in double-dollarsigns:
-
-$$I = \int \rho R^{2} dV$$
-
-And note that you can backslash-escape any punctuation characters
-which you wish to be displayed literally, ex.: \`foo\`, \*bar\*, etc.
+#### <a name="dbFilePath"></a>dbFilePath
+Nightwatch GUI uses [nedb](https://www.npmjs.com/package/nedb) library for DB management. The data will be saved to the file specified in this argument.

@@ -6,7 +6,8 @@ Frontend uses Vue.js
 
 ## Using
 
-Start server from command line: `nightwatchjs-gui` from your project root folder. `node_modules/.bin/nightwatchjs-gui` if the package is installed locally.
+Start server from command line: `nightwatchjs-gui` from your project root folder.\
+`node_modules/.bin/nightwatchjs-gui` if the package is installed locally.\
 Example:
 `node_modules/.bin/nightwatchjs-gui --port=4600`
 

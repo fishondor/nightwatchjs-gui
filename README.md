@@ -41,9 +41,9 @@ cronjobCallback|A callback function to run when test cronjob is done or a path t
 Absolute path to your nightwatch project config file. This will be used to extract the paths to tests folders and testing environments (selenium etc.). Tests folders must be defined in this file although this property is optional for nightwatch, this is the way nightwatch-gui will know how to list your tests and tests groups.
 
 #### <a name="cronjobCallback"></a>cronjobCallback
-Nightwatch GUI will call this function with arguments:
--   results - The test results parsed from stdout
--   cronjob - The cronjob object that was executed
+Nightwatch GUI will call this function with the following arguments:\
+* results - The test results parsed from stdout
+* cronjob - The cronjob object that was executed
 
 #### <a name="dbFilePath"></a>dbFilePath
 Nightwatch GUI uses [nedb](https://www.npmjs.com/package/nedb) library for DB management. The data will be saved to the file specified in this argument.

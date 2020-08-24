@@ -1,11 +1,20 @@
 <template>
-  <v-container fluid class="about">
-    <VueShowdown :markdown="fileContent" flavor="github"></VueShowdown>
+  <v-container fluid class="about markdown-body">
+    <VueShowdown 
+      :markdown="fileContent" 
+      :flavor="'github'" 
+      :options="{
+        tables: true,
+        ghCodeBlocks: true,
+        ghMentionsLink: 'https://github.com/{u}',
+        encodeEmails: true
+      }"></VueShowdown>
   </v-container>
 </template>
 
 <script>
 import VueShowdown from "vue-showdown";
+import 'github-markdown-css'
 
 import MarkDownData from '../../../README.md';
 

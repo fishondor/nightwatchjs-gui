@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
+    "github-markdown-css": "^4.0.0",
     "vue": "^2.6.11",
     "vue-resource": "^1.5.1",
     "vue-router": "^3.2.0",

@@ -9,6 +9,7 @@
         <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
     <Notification />
+    <Loader />
   </v-app>
 </template>
 
@@ -16,6 +17,7 @@
 import NavigationDrawer from '@/views/components/NavigationDrawer';
 import AppBar from '@/views/components/AppBar';
 import Notification from '@/views/components/Notification';
+import Loader from './views/components/Loader';
 
 export default {
     name: 'App',
@@ -23,7 +25,8 @@ export default {
     components: {
       NavigationDrawer,
       AppBar,
-      Notification
+      Notification,
+      Loader
     },
 
     data: () => ({

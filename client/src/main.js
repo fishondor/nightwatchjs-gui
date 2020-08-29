@@ -8,6 +8,7 @@ import VueResource from "vue-resource";
 import { serverService } from './providers/Server';
 import { loggerService } from './providers/Logger';
 import { notificationsService } from './providers/Notifications';
+import { loaderService } from './providers/Loader';
 
 Vue.config.productionTip = false
 Vue.use(VueResource);
@@ -18,10 +19,12 @@ new Vue({
   serverService,
   loggerService,
   notificationsService,
+  loaderService,
 
   created: function(){
     serverService.init(loggerService);
     notificationsService.init(store);
+    loaderService.init(store)
   },
 
   vuetify,

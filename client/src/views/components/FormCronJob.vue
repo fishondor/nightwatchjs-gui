@@ -26,7 +26,6 @@
                     v-model="formValues.tags"
                     :items="cronjobsTags"
                     label="Tags (will be used for finished callback)"
-                    @change="onFormChanged"
                     multiple
                     small-chips
                     outlined

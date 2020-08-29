@@ -21,12 +21,9 @@
                 </v-row>
                 <v-row v-if="formValues.type=='groups'">
                     <v-col>
-                        <h4>Available test groups</h4>
-                        <div v-for="(item, index) in testGroups" :key="'testgroup-' + item.name">
-                            <p>{{item.name}}</p>
-                            <v-treeview
-                                v-model="formValues.selectedTestGroups[index]"
-                                :items="item.items"
+                        <v-treeview
+                                v-model="formValues.selectedTestGroups"
+                                :items="testGroups"
                                 selection-type="independent"
                                 selectable
                                 return-object
@@ -35,32 +32,27 @@
                                 item-disabled="disabled"
                                 @input="onFormChanged"
                             ></v-treeview>
-                        </div>
                     </v-col>
                 </v-row>
                 <v-row v-if="formValues.type=='single'">
                     <v-col>
-                        <h4>Available tests</h4>
                         <v-radio-group v-model="formValues.selectedTest" v-on:change="onFormChanged">
-                            <div v-for="item in tests" :key="'test-' + item.name">
-                                <p>{{item.name}}</p>
-                                <v-treeview
-                                    activatable
-                                    color="info"
-                                    :items="item.items"
-                                    item-children="nodes"
-                                    return-object
-                                    item-key="pathname"
-                                >
-                                    <template v-slot:prepend="{ item }">
-                                        <v-radio
-                                            :label="''"
-                                            :value="item"
-                                            :disabled="item.disabled"
-                                        ></v-radio>
-                                    </template>
-                                </v-treeview>
-                            </div>
+                            <v-treeview
+                                activatable
+                                color="info"
+                                :items="tests"
+                                item-children="nodes"
+                                return-object
+                                item-key="pathname"
+                            >
+                                <template v-slot:prepend="{ item }">
+                                    <v-radio
+                                        :label="''"
+                                        :value="item"
+                                        :disabled="item.disabled"
+                                    ></v-radio>
+                                </template>
+                            </v-treeview>
                         </v-radio-group>
                     </v-col>
                 </v-row>
@@ -138,7 +130,7 @@ export default {
     data: () => ({
         formValues: {
             selectedTestGroups: [],
-            selectedTest: false,
+            selectedTest: [],
             selectedEnvironments: [],
             environmentVariables: [
                 {name: "", value: ""}
@@ -151,22 +143,12 @@ export default {
         ...mapState({
             tests: function(state){
                 return state.tests.map(
-                    test => {
-                        return {
-                            name: test.name,
-                            items: this.disableItemsByType(test.items, 'dir')
-                        }
-                    }
+                    test => this.disableNodeByType(test, 'dir')
                 )
             },
             testGroups: function(state){
                 return state.testGroups.map(
-                    group => {
-                        return {
-                            name: group.name,
-                            items: this.disableItemsByType(group.items, 'file')
-                        }
-                    }
+                    group => this.disableNodeByType(group, 'file')
                 )
             },
             variablesEnvironments: state => state.variablesEnvironments,
@@ -188,21 +170,20 @@ export default {
         }
     },
     methods: {
-        submitForm: function(){
-            this.$emit('onSubmit', this.formValues);
+        disableNodeByType(node, type){
+            node.disabled = node.type == type;
+            if(node.nodes)
+                node.nodes = this.disableItemsByType(node.nodes, type);
+            return node;
         },
         disableItemsByType: function(items, type){
             let disabled = items.map(
-                item => {
-                    item.disabled = item.type == type;
-                    if(item.nodes)
-                        item.nodes = this.disableItemsByType(item.nodes, type);
-                    return item;
-                }
+                node => this.disableNodeByType(node, type)
             )
             return disabled;
         },
         onFormChanged: function(){
+            console.log("On form changed", this.formValues);
             try{
                 let test = this.toTestObject(this.formValues);
                 this.$emit('onUpdate', test);
@@ -217,14 +198,7 @@ export default {
             this.loading = false;
         },
         toTestObject: function(formValues){
-            let tests = formValues.type == 'groups' ? 
-                formValues.selectedTestGroups.reduce(
-                    (accumulator, currentItem) => {
-                        let testGroup = currentItem.map(group => createPathString(group))
-                        return accumulator.concat(testGroup);
-                    },
-                    []
-                ) : 
+            let tests = formValues.type == 'groups' ? formValues.selectedTestGroups.map(group => createPathString(group)) :
                 createPathString(formValues.selectedTest);
             return new Test(
                 formValues.type, 

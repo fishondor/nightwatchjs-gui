@@ -1,10 +1,10 @@
 var Server = require('./server/app/server');
-var ConstantsService = require('./server/app/providers/Constants');
+var EnvironmentService = require('./server/app/providers/Environment');
 
 class NightwatchJSGUI{
     
     constructor(args = {}){
-        ConstantsService(args);
+        EnvironmentService(args);
         let server = new Server(args);
         server.start();
     }

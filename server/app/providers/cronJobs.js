@@ -6,14 +6,14 @@ const Logger = require('./Logger');
 const {
     DB_FILE_PATH,
     CRONJOB_CALLBACK
-} = require('./Constants')();
+} = require('./Environment')();
 
 class CronJobsService{
 
     constructor(){
         this.logger = new Logger("CronJobs service");
         this.cronJobManager = new CronJobManager();
-        this.db = new DBService(DB_FILE_PATH);
+        this.db = new DBService(`${DB_FILE_PATH}/cron_jobs.db`);
     }
 
     async registerJob(doc){

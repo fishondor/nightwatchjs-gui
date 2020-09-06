@@ -6,7 +6,7 @@ const {
     PROJECT_ROOT_DIRECTORY,
     TESTS_DIRECTORIES,
     TESTS_ENVIRONMENTS
-} = require('./Constants')();
+} = require('./Environment')();
 
 var ansi_up = new AU.default;
 
@@ -16,8 +16,10 @@ const {
 
 const logger = new Logger('Tests service');
 
+const reporterPath = `${__dirname}/html-reporter.js`;
+
 const runTest = async (test) => {
-    let result = await executeCommand(`cd ${PROJECT_ROOT_DIRECTORY} && ` + test);
+    let result = await executeCommand(`cd ${PROJECT_ROOT_DIRECTORY} && ${test} --reporter ${reporterPath}`);
     return ansi_up.ansi_to_html(result);
 }
 

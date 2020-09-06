@@ -123,7 +123,8 @@ import { mapState } from 'vuex';
 import Test from '../../../../shared/Test';
 
 import {
-    createPathString
+    createPathString,
+    disableNodeByType
 } from '../../providers/Utils';
 
 export default {
@@ -142,13 +143,14 @@ export default {
     computed: {
         ...mapState({
             tests: function(state){
-                return state.tests.map(
-                    test => this.disableNodeByType(test, 'dir')
+                let tests = state.tests.map(
+                    test => disableNodeByType(test, 'dir')
                 )
+                return tests;
             },
             testGroups: function(state){
                 return state.testGroups.map(
-                    group => this.disableNodeByType(group, 'file')
+                    group => disableNodeByType(group, 'file')
                 )
             },
             variablesEnvironments: state => state.variablesEnvironments,
@@ -170,20 +172,7 @@ export default {
         }
     },
     methods: {
-        disableNodeByType(node, type){
-            node.disabled = node.type == type;
-            if(node.nodes)
-                node.nodes = this.disableItemsByType(node.nodes, type);
-            return node;
-        },
-        disableItemsByType: function(items, type){
-            let disabled = items.map(
-                node => this.disableNodeByType(node, type)
-            )
-            return disabled;
-        },
         onFormChanged: function(){
-            console.log("On form changed", this.formValues);
             try{
                 let test = this.toTestObject(this.formValues);
                 this.$emit('onUpdate', test);

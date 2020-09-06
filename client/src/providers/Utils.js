@@ -6,6 +6,21 @@ const createPathString = (node) => {
     return pathArray.slice(-(node.depth + 1)).join('/');
 }
 
+const disableNodeByType = (node, type) => {
+    node.disabled = node.type == type;
+    if(node.nodes)
+        node.nodes = disableItemsByType(node.nodes, type);
+    return node;
+}
+const disableItemsByType = (items, type) => {
+    let disabled = items.map(
+        node => disableNodeByType(node, type)
+    )
+    return disabled;
+}
+
 export {
-    createPathString
+    createPathString,
+    disableNodeByType,
+    disableItemsByType
 }

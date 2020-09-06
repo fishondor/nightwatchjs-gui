@@ -72,6 +72,10 @@ class ServerService{
         return this.getData(`job/${job._id}`, "Could not delete cron job");
     }
 
+    getLogFilesList(){
+        return this.getData('reports', "Could not get reports");
+    }
+
 }
 
 const serverService = new ServerService();

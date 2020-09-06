@@ -16,6 +16,23 @@ Vue.use(VueRouter)
     component: () => import('../views/About.vue')
   },
   {
+    path: '/reports',
+    component: () => import('../views/Reports.vue'),
+    children: [
+      {
+        path: 'all',
+        name: 'All Reports',
+        component: () => import('../views/components/ReportsTable.vue'),
+        alias: ''
+      },
+      {
+        path: 'view',
+        name: 'Report',
+        component: () => import('../views/components/ReportViewer.vue')
+      }
+    ]
+  },
+  {
     path: '/cron-jobs',
     component: () => import('../views/CronJobs.vue'),
     children: [

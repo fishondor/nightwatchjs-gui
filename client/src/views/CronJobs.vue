@@ -12,7 +12,6 @@ export default {
     },
     computed: {
         show() {
-            console.log("Route", this.$route.path);
             return this.$route.path != '/new';
         }
     },

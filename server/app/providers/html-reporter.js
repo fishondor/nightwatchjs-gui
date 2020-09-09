@@ -10,7 +10,10 @@ module.exports = {
     try{
         await axios.post('http://localhost:8080/api/report', 
         {
-            report: JSON.stringify(results)
+            report: JSON.stringify(results),
+            options: JSON.stringify(options),
+            timestamp: new Date().toString(),
+            browser: options.filename_prefix.split('_').join(' ')
         });
         done();
     }catch(err){

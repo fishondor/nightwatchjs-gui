@@ -54,9 +54,14 @@ const testsOutputService = new TestsOutputService();
 const api = {
 
     saveReport: async (req, res) => {
-        let report = req.body.report;
+        let data = {
+            report: req.body.report,
+            options: req.body.options,
+            timestamp: req.body.timestamp,
+            browser: req.body.browser
+        };
         try{
-            let newDoc = await testsOutputService.saveReport({report: report});
+            let newDoc = await testsOutputService.saveReport(data);
             if(!newDoc){
                 res.sendStatus(500);
                 return;

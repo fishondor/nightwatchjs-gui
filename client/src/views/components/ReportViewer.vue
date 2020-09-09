@@ -69,7 +69,6 @@ export default {
     },
     created(){
         this.results = this.$route.params.report;
-        console.log("results", this.results);
         this.browser = this.$route.params.browser;
         this.timestamp = this.$route.params.timestamp;
         this.converter = new Convert();

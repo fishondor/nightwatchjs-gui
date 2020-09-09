@@ -54,12 +54,8 @@ export default {
         this.getReports();
     },
     methods: {
-        onItemSelected(item){
-            console.log("Selected", item);
-        },
         async getReports(){
             let data = await this.$serverService.getLogFilesList();
-            console.log("Reports", data.reports);
             this.reports = data.reports;
         },
         formatDate(dateString){

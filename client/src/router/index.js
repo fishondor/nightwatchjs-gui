@@ -6,14 +6,20 @@ Vue.use(VueRouter)
   const routes = [
   {
     path: '/',
-    name: 'Execute Test',
+    name: 'executeTest',
     component: () => import('../views/ExecuteTest.vue'), 
-    alias: '/test'
+    alias: '/test',
+    meta: {
+      title: 'Execute Test'
+    }
   },
   {
     path: '/about',
-    name: 'About',
-    component: () => import('../views/About.vue')
+    name: 'about',
+    component: () => import('../views/About.vue'),
+    meta: {
+      title: 'About'
+    }
   },
   {
     path: '/reports',
@@ -21,14 +27,21 @@ Vue.use(VueRouter)
     children: [
       {
         path: 'all',
-        name: 'All Reports',
+        name: 'allReports',
         component: () => import('../views/components/ReportsTable.vue'),
-        alias: ''
+        alias: '',
+        meta: {
+          title: 'All reports'
+        }
       },
       {
-        path: 'view',
-        name: 'Report',
-        component: () => import('../views/components/ReportViewer.vue')
+        path: 'report',
+        name: 'report',
+        component: () => import('../views/components/ReportViewer.vue'),
+        props: { report: false },
+        meta: {
+          title: 'Report'
+        }
       }
     ]
   },
@@ -38,14 +51,20 @@ Vue.use(VueRouter)
     children: [
       {
         path: 'all',
-        name: 'Cron Jobs',
+        name: 'cronJobs',
         component: () => import('../views/components/CronJobsTable.vue'),
-        alias: ''
+        alias: '',
+        meta: {
+          title: 'Cron Jobs'
+        }
       },
       {
         path: 'new',
-        name: 'New Cron Job',
-        component: () => import('../views/NewCronJob.vue')
+        name: 'newCronJob',
+        component: () => import('../views/NewCronJob.vue'),
+        meta: {
+          title: 'New Cron Job'
+        }
       }
     ]
   }

@@ -1,5 +1,14 @@
 <template>
     <v-container>
+        <div>
+            <v-icon
+                small
+                class="mr-2"
+                @click="back()"
+            >
+                mdi-arrow-left-circle
+            </v-icon>
+        </div>
         <table border="0" cellpadding="0" cellspacing="0">
             <tr class="overview">
             <td colspan="3" :title="browser"><strong>Browser:</strong> {{browser}}</td>
@@ -38,12 +47,23 @@
                         <span class="error"><strong>FAILED:</strong></span>
                         <span class="error"><strong>{{test.failed}}</strong></span> assertions failed and
                     </template>
+                    <template v-if="test.errors">
+                        <span class="error"><strong>ERRORS:</strong></span>
+                        <span class="error"><strong>{{test.errors}}</strong></span> errors
+                    </template>
                     <template v-else>
-                        <span v-if="!test.failed" class="success"><strong>OK.</strong></span>
+                        <span v-if="!test.failed " class="success"><strong>OK.</strong></span>
                     </template>
                     <span class="success"><strong>{{test.passed}}</strong></span> assertions passed. ({{test.time}}s)
                 </p>
             </div>
+            <template v-if="testSuite.errors">
+                <div v-if="testSuite.errmessages && testSuite.errmessages.length" class="stacktrace">
+                    <code v-for="(message, index) in testSuite.errmessages" :key="`errorMessage_${index}`">
+                        <pre class="error_message" v-html="parseAnsi(message)"></pre>
+                    </code>
+                </div>
+            </template>
             <template v-if="testSuite.skipped">
                 <h4>skipped</h4>
                 <ul>
@@ -72,10 +92,14 @@ export default {
         this.browser = this.$route.params.browser;
         this.timestamp = this.$route.params.timestamp;
         this.converter = new Convert();
+        console.log("prort", this.results);
     },
     methods: {
         parseAnsi(text){
             return this.converter.toHtml(text);
+        },
+        back(){
+            this.$router.go(-1)
         }
     }
 }
@@ -85,43 +109,38 @@ export default {
 
     table { width: 100%; margin-bottom: 20px; }
 
-      td {
+    td {
         padding: 7px;
         border-top: none;
         border-left: 1px black solid;
         border-bottom: 1px black solid;
         border-right: none;
-      }
+    }
 
-      td.pass { color: #003b07; background: #86e191; }
-      td.skip { color: #7d3a00; background: #ffd24a; }
-      td.fail { color: #5e0e00; background: #ff9c8a; }
+    td.pass { color: #003b07; background: #86e191; }
+    td.skip { color: #7d3a00; background: #ffd24a; }
+    td.fail { color: #5e0e00; background: #ff9c8a; }
 
     tr:last-child       { border-top: 1px black solid; }
-      tr:last-child td    { border-top: 1px black solid; }
-      tr:first-child td   { border-top: 1px black solid; }
-        td:last-child       { border-right: 1px black solid; }
+    tr:last-child td    { border-top: 1px black solid; }
+    tr:first-child td   { border-top: 1px black solid; }
+    td:last-child       { border-right: 1px black solid; }
 
     tr.overview td      { padding-bottom: 0px; border-bottom: none; }
     tr.overview.last td { padding-bottom: 3px; }
 
     ul.assertions   { list-style-type: none; }
-      span.error      { color: #AD2B2B; }
-      span.success    { color: #53891E; }
+    span.error      { color: #AD2B2B; }
+    span.success    { color: #53891E; }
 
     .stacktrace { display: inline; }
-      .stacktrace code { display: none; }
 
-    #nightwatch-logo {
-      position: absolute;
-      top: 20px;
-      right: 33px;
-      width: 70px;
-      height: 75px;
-      background: transparent url('http://nightwatchjs.org/img/logo-nightwatch.png') no-repeat;
-      background-size: 70px 75px;
-    }
     .container {
         overflow-y: auto;
+    }
+
+    code pre{
+        background: #f7f7f7;
+        overflow-x: auto;
     }
 </style>

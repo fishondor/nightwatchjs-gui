@@ -5,6 +5,7 @@
             :items="reports"
             :sort-by="['createdAt']"
             item-key="_id"
+            @click:row="viewItem"
         >
         <template v-slot:item.createdAt="{ item }">
             {{formatDate(item.createdAt)}}
@@ -17,15 +18,6 @@
                 :color="testColor(test)">
                 {{key}}
             </v-chip>
-        </template>
-        <template v-slot:item.view="{ item }">
-            <v-icon
-                small
-                class="mr-2"
-                @click="viewItem(item)"
-            >
-                mdi-eye
-            </v-icon>
         </template>
         </v-data-table>
     </v-layout>
@@ -42,10 +34,9 @@ export default {
             headers: [
                 { text: 'Executed', value: 'createdAt' },
                 { text: 'Modules', value: 'report.modules' },
-                { text: 'Errors', value: 'report.errors' },
-                { text: 'Failed', value: 'report.failed' },
                 { text: 'Passed', value: 'report.passed' },
-                { text: '', value: 'view' }
+                { text: 'Failed', value: 'report.failed' },
+                { text: 'Errors', value: 'report.errors' }
             ],
             reports: []
         }

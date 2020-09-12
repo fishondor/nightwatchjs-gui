@@ -1,6 +1,3 @@
-const { TreeView } = require('node-treeview');
-var path = require('path');
-
 const {
     DB_FILE_PATH
 } = require('./Environment')();
@@ -12,6 +9,7 @@ class TestsOutputService{
     constructor(){
         this.logger = new Logger("TestsOutput service");
         this.db = new DBService(`${DB_FILE_PATH}/reports.db`);
+        this.db.setExpiration(604800);
     }
 
     async saveReport(doc){

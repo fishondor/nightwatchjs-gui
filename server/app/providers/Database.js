@@ -13,6 +13,13 @@ class DbService{
         });
     }
 
+    setExpiration(seconds){
+        this.db.ensureIndex({ fieldName: 'createdAt', expireAfterSeconds: seconds }, (err) => {
+            if(err)
+                this.logger.error("Error defining expiration time for log documents", err);
+        });
+    }
+
     insert(document){
         return new Promise(
             (resolve, reject) => {

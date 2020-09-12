@@ -92,7 +92,6 @@ export default {
         this.browser = this.$route.params.browser;
         this.timestamp = this.$route.params.timestamp;
         this.converter = new Convert();
-        console.log("prort", this.results);
     },
     methods: {
         parseAnsi(text){

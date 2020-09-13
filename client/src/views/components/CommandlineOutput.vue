@@ -17,7 +17,7 @@ export default {
   color: white;
   overflow: auto;
   padding: 20px;
-  max-height: 100%;
+  height: 100%;
 
   &.wrap-text{
       white-space: break-spaces;

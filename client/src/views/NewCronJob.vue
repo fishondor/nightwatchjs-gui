@@ -1,12 +1,12 @@
 <template>
-    <v-container fluid class="new-cron-job-main">
+    <div class="new-cron-job-main">
         <Dashboard :output="command">
             <h3>Set cron job</h3>
             <FormCronJob @onSubmit="onCronSubmit"/>
             <h3>Set Test</h3>
             <FormTests @onUpdate="onTestUpdated" @onTestResults="setTestResults" />
         </Dashboard>
-    </v-container>
+    </div>
 </template>
 
 <script>

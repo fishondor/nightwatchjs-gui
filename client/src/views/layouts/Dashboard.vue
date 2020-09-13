@@ -1,9 +1,9 @@
 <template>
     <splitPane class="dashboard-main" :split="'horizontal'">
         <template slot="paneL">
-            <div class="controls">
+            <v-container fluid class="controls">
                 <slot></slot>
-            </div>
+            </v-container>
         </template>
         <template slot="paneR">
             <div class="command">
@@ -38,10 +38,11 @@ export default {
         max-height: 100%;
     }
 
-    .splitter-pane-resizer {
-        margin: 0; left: 0;
-        position: relative;
-        height: 40px;
+    ::v-deep .splitter-pane-resizer.horizontal {
+        margin-top: -7px;
+        height: 11px;
+        background: grey;
+        opacity: 1;
         &:before {
             display: block;
             content: "";
@@ -64,7 +65,7 @@ export default {
 
     .command{
         overflow: auto;
-        max-height: 100%;
+        height: 100%;
     }
 }
 </style>

@@ -166,9 +166,9 @@ export default {
                     return false;
                 return true;
             },
-           set(formValid){
-             return formValid
-           } 
+            set(formValid){
+                return formValid
+            } 
         }
     },
     methods: {

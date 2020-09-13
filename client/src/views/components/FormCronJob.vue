@@ -1,7 +1,6 @@
 <template>
     <v-form
-        ref="cronjobs-form"
-        lazy-validation
+         v-model="isValid"
     >
         <v-row class="d-flex flex-sm-row flex-column">
             <v-col class="flex-grow-1">
@@ -9,7 +8,9 @@
                     v-model="formValues.title"
                     label="Title"
                     outlined
+                    required
                     validate-on-blur
+                    :rules="formValidation.required"
                 ></v-text-field>
             </v-col>
             <v-col class="flex-grow-1">
@@ -19,13 +20,14 @@
                     outlined
                     required
                     validate-on-blur
+                    :rules="formValidation.cron"
                 ></v-text-field>
             </v-col>
             <v-col class="flex-grow-1">
                 <v-combobox
                     v-model="formValues.tags"
                     :items="cronjobsTags"
-                    label="Tags (will be used for finished callback)"
+                    label="Tags (will be passed to callback)"
                     multiple
                     small-chips
                     outlined
@@ -38,7 +40,8 @@
             <v-col>
                 <v-btn color="primary" 
                     @click="submitForm"
-                    :loading="loading">Save and activate</v-btn>
+                    :loading="loading"
+                    :disabled="!isValid">Save and activate</v-btn>
             </v-col>
         </v-row>
     </v-form>
@@ -46,6 +49,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import cron from 'cron-validate'
 
 export default {
     data: () => ({
@@ -54,7 +58,17 @@ export default {
             expression: '',
             tags: []
         },
-        loading: false
+        loading: false,
+        isValid: true,
+        formValidation: {
+            required: [v => !!v || 'This field is required'],
+            cron: [v => {
+                let validation = cron(v, {
+                    preset: 'npm-node-cron',
+                });
+                return validation.isValid() || validation.error.join(', ');
+            }]
+        }
     }),
     computed: {
         ...mapState({

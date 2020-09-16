@@ -25,8 +25,11 @@ export default new Vuex.Store({
         setTestsCronJobs(state, jobs){
             state.testsCronJobs = jobs;
         },
+        addCronjob(state, cronjob){
+            state.testsCronJobs.push(cronjob);
+        },
         setNotification(state, notification){
-          state.notification = notification;
+            state.notification = notification;
         },
         setShowLoader(state, showLoader){
             state.showLoader = showLoader

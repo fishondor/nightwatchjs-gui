@@ -68,8 +68,17 @@ class ServerService{
         return this.getData(`job/start/${jobId}`, "Could not start cron job");
     }
 
-    deleteCronJob(job){
-        return this.getData(`job/${job._id}`, "Could not delete cron job");
+    async deleteCronJob(job){
+        try{
+            let response = await axios.delete(`/api/job/${job._id}`);
+            if(response.status != 200){
+                this.logger.error("Could not delete cron job: ", response.status, response.data || "");
+            }
+            return response.data;
+        }catch(error){
+            this.logger.error(error);
+            return false;
+        }
     }
 
     getLogFilesList(){

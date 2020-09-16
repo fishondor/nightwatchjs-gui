@@ -95,8 +95,11 @@ export default {
         onCronSubmit: async function(){
             let cronjob = new CronJob(this.cron.expression, this.test, this.cron.title, {tags: this.cron.tags});
             let response = await this.$serverService.registerTestCronJob(cronjob);
-            if(response)
+            if(response){
                 this.$notificationsService.success(`Cron Job ${response.job.title} was registered and activated`);
+                this.$store.commit('addCronjob', CronJob.fromJSON(response.job));
+                this.$router.push({ name: 'cronJobs' });
+            }
             else
                 this.$notificationsService.error("Could not register item. Please refer to logs for more information");
         }

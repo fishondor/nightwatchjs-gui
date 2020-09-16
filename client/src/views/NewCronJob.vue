@@ -1,10 +1,61 @@
 <template>
     <div class="new-cron-job-main">
         <Dashboard :output="command">
-            <h3>Set cron job</h3>
-            <FormCronJob @onSubmit="onCronSubmit"/>
-            <h3>Set Test</h3>
-            <FormTests @onUpdate="onTestUpdated" @onTestResults="setTestResults" />
+            <v-stepper
+                v-model="e1">
+                <v-stepper-header>
+                    <template>
+                        <v-stepper-step
+                            :key="`1-step`"
+                            :complete="e1 > 1"
+                            :step="1"
+                            :editable="false">
+                            Select the test or test group to run
+                        </v-stepper-step>
+                        <v-stepper-step
+                            :key="`2-step`"
+                            :complete="e1 > 2"
+                            :step="2"
+                            :editable="false">
+                            Set cronjob
+                        </v-stepper-step>
+                    </template>
+                </v-stepper-header>
+
+                <v-stepper-items>
+                    <v-stepper-content
+                        :step="1"
+                    >
+                        <FormTests @onUpdate="onTestUpdated" @onTestResults="setTestResults" />
+
+                        <v-btn
+                            :disabled="!test || !test.isValid()"
+                            color="primary"
+                            @click="e1 = 2">
+                            Continue
+                        </v-btn>
+                    </v-stepper-content>
+                </v-stepper-items>
+                <v-stepper-items>
+                    <v-stepper-content
+                        :step="2"
+                    >
+                        <FormCronJob @onUpdate="onCronUpdated"/>
+
+                        <v-btn
+                            :disabled="!cron"
+                            color="primary"
+                            @click="onCronSubmit">
+                            Save and activate
+                        </v-btn>
+
+                        <v-btn text
+                            @click="e1 = 1">
+                            Back    
+                        </v-btn>
+                    </v-stepper-content>
+                </v-stepper-items>
+            </v-stepper>
         </Dashboard>
     </div>
 </template>
@@ -25,23 +76,24 @@ export default {
     data: () => ({
         testPath: '',
         testEnvironments: '',
-        test: {},
-        command: 'No valid command available yet'
+        test: false,
+        cron: false,
+        command: 'No valid command available yet',
+        e1: 1
     }),
     methods: {
         onTestUpdated: function(test){
-            if(test){
-                this.test = test;
-                this.command = this.test.getCommand();
-            }else{
-                this.command = 'No valid command available yet'
-            }
+            this.test = test;
+            this.command = this.test ? this.test.getCommand() : 'No valid command available yet'
+        },
+        onCronUpdated: function(cron){
+            this.cron = cron;
         },
         setTestResults: function(result){
             this.command = result;
         },
-        onCronSubmit: async function(values){
-            let cronjob = new CronJob(values.expression, this.test, values.title, {tags: values.tags});
+        onCronSubmit: async function(){
+            let cronjob = new CronJob(this.cron.expression, this.test, this.cron.title, {tags: this.cron.tags});
             let response = await this.$serverService.registerTestCronJob(cronjob);
             if(response)
                 this.$notificationsService.success(`Cron Job ${response.job.title} was registered and activated`);

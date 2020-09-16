@@ -1,5 +1,5 @@
 <template>
-    <splitPane class="dashboard-main" :split="'horizontal'" :default-percent='80'>
+    <splitPane class="dashboard-main" :split="'horizontal'" :default-percent='90'>
         <template slot="paneL">
             <v-container fluid class="controls">
                 <slot></slot>

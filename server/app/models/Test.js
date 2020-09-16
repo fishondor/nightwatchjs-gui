@@ -35,6 +35,10 @@ class Test{
         return `${environmentVariables}node_modules/.bin/nightwatch -e ${environments} ${testCommand[this.type](this.tests)}`;
     }
 
+    isValid(){
+        return this.environments.length && this.tests.length;
+    }
+
     static cronCommandFunction(command) {
         return function(onComplete){
             /* executeCommand(`cd .. && ${command}`)

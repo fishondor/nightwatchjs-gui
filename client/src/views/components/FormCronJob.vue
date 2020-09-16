@@ -1,6 +1,7 @@
 <template>
     <v-form
          v-model="isValid"
+         @input="onFormInput"
     >
         <v-row class="d-flex flex-sm-row flex-column">
             <v-col class="flex-grow-1">
@@ -34,14 +35,6 @@
                     deletable-chips
                     clearable
                 ></v-combobox>
-            </v-col>
-        </v-row>
-        <v-row>
-            <v-col>
-                <v-btn color="primary" 
-                    @click="submitForm"
-                    :loading="loading"
-                    :disabled="!isValid">Save and activate</v-btn>
             </v-col>
         </v-row>
     </v-form>
@@ -78,9 +71,9 @@ export default {
         })
     },
     methods: {
-        submitForm: function(){
-            this.$emit('onSubmit', this.formValues);
-        },
+        onFormInput: function(value){
+            this.$emit('onUpdate', value ? this.formValues : false)
+        }
     }
 }
 </script>

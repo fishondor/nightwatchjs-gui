@@ -16,13 +16,6 @@
             <template v-slot:item.actions="{ item }">
                 <v-icon
                     small
-                    class="mr-2"
-                    @click="editItem(item)"
-                >
-                    mdi-pencil
-                </v-icon>
-                <v-icon
-                    small
                     @click="deleteItem(item)"
                 >
                     mdi-delete
@@ -34,7 +27,10 @@
                 </td>
             </template>
             <template v-slot:item.running="{ item }">
-                <v-tooltip top v-if="item.running">
+                <v-tooltip 
+                    top 
+                    v-if="item.running"
+                    :open-delay="500">
                     <template v-slot:activator="{ on, attrs }">
                         <v-chip v-bind="attrs" v-on="on" :color="'green'" dark @click="stopItem(item)">
                             Active
@@ -42,7 +38,10 @@
                     </template>
                     <span>Click to stop</span>
                 </v-tooltip>
-                <v-tooltip top v-else>
+                <v-tooltip 
+                    top 
+                    v-else
+                    :open-delay="500">
                     <template v-slot:activator="{ on, attrs }">
                         <v-chip v-bind="attrs" v-on="on" :color="'orange'" dark @click="startItem(item)">
                             Paused
@@ -85,9 +84,6 @@ export default {
         }
     },
     methods: {
-        editItem: function(item){
-            console.log("Edit", item);
-        },
         deleteItem: async function(item){
             try{
                 let itemsDeleted = await this.$serverService.deleteCronJob(item);
@@ -142,3 +138,10 @@ export default {
     }
 }
 </script>
+
+<style lang="scss">
+.v-tooltip__content {
+    line-height: 15px;
+    padding: 5px;
+}
+</style>

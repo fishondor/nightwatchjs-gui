@@ -10,11 +10,6 @@ export default {
     created(){
         this.getCronJobs();
     },
-    computed: {
-        show() {
-            return this.$route.path != '/new';
-        }
-    },
     methods: {
         getCronJobs: async function(){
           let jobs = await this.$serverService.getCronJobs();

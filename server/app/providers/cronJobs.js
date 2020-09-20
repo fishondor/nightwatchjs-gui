@@ -3,6 +3,7 @@ var CronJobManager = require('cron-job-manager');
 const DBService = require('./Database');
 const CronJobModel = require('../models/CronJob');
 const Logger = require('./Logger');
+
 const {
     DB_FILE_PATH,
     CRONJOB_CALLBACK

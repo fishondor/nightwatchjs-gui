@@ -14,6 +14,8 @@ const TESTS_DIRECTORIES = [`${PROJECT_ROOT_DIRECTORY}/tests`];
 
 const TESTS_OUTPUT_DIRECTORY = process.cwd() + '/nightwatchjs-gui-reports';
 
+const REPORTER_PATH = `${__dirname}/reporter.js`;
+
 module.exports = {
     PROJECT_ROOT_DIRECTORY,
     DB_FILE_PATH,
@@ -21,5 +23,6 @@ module.exports = {
     CONFIG_JS_FILE_PATH,
     CONFIG_FILE_PATH,
     TESTS_DIRECTORIES,
-    TESTS_OUTPUT_DIRECTORY
+    TESTS_OUTPUT_DIRECTORY,
+    REPORTER_PATH
 }

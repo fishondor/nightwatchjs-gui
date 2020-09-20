@@ -8,7 +8,8 @@ var {
     CONFIG_JS_FILE_PATH,
     CONFIG_FILE_PATH,
     TESTS_DIRECTORIES,
-    TESTS_OUTPUT_DIRECTORY
+    TESTS_OUTPUT_DIRECTORY,
+    REPORTER_PATH
 } = require('./constants');
 const Logger = require('./Logger');
 var logger = new Logger('Environment Service');
@@ -22,6 +23,7 @@ class EnvironmentService{
         this.TESTS_DIRECTORIES = TESTS_DIRECTORIES;
         this.CRONJOB_CALLBACK_FUNCTION = false;
         this.TESTS_OUTPUT_DIRECTORY = `${this.PROJECT_ROOT_DIRECTORY}/${path.basename(TESTS_OUTPUT_DIRECTORY)}`;
+        this.REPORTER_PATH = REPORTER_PATH;
         this.setProperties(constants);
     }
 

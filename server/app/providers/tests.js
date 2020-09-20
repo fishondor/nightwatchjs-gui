@@ -1,11 +1,13 @@
 var AU = require('ansi_up');
 const { TreeView } = require('node-treeview');
 
-const Logger = require('./Logger');
+const Test = require('../models/Test');
+
 const {
     PROJECT_ROOT_DIRECTORY,
     TESTS_DIRECTORIES,
-    TESTS_ENVIRONMENTS
+    TESTS_ENVIRONMENTS,
+    REPORTER_PATH
 } = require('./Environment')();
 
 var ansi_up = new AU.default;
@@ -14,18 +16,15 @@ const {
     executeCommand
 } = require('./utils');
 
-const logger = new Logger('Tests service');
-
-const reporterPath = `${__dirname}/html-reporter.js`;
-
 const runTest = async (test) => {
-    let result = await executeCommand(`cd ${PROJECT_ROOT_DIRECTORY} && ${test} --reporter ${reporterPath}`);
+    let result = await executeCommand(`cd ${PROJECT_ROOT_DIRECTORY} && ${test.getCommand()}`);
     return ansi_up.ansi_to_html(result);
 }
 
 const api = {
     runTest: async (req, res) => {
-        let test = req.body.test;
+        let test = Test.fromJSON(req.body.test);
+        test.setReporterPath(REPORTER_PATH);
         let results = await runTest(test);
         return res.json(results);
     },

@@ -1,3 +1,5 @@
+const axios = require('axios');
+
 /* const {
     executeCommand
 } = require('../providers/utils'); */
@@ -20,11 +22,11 @@ class NWCronJob{
     }
 
     get cronExecuteFunction(){
-        let testCommand = this.test.getCommand();
         let context = this;
         return async function(callback){
-            //let results = await executeCommand(testCommand);
-            let results = "The command result, will execute command: " + testCommand;
+            let results = await axios.post('http://localhost:8080/api/run-test',
+                {test: context.test}
+            );
             callback(results, context);
         }
     }

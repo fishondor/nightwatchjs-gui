@@ -19,6 +19,7 @@ class Test{
         this.tests = tests;
         this.environments = environments;
         this.environmentVariables = args.environmentVariables;
+        this.reporterPath = args.reporterPath;
     }
 
     getCommand(){
@@ -32,11 +33,16 @@ class Test{
             ''
         );
         let environments = this.environments.join(',');
-        return `${environmentVariables}node_modules/.bin/nightwatch -e ${environments} ${testCommand[this.type](this.tests)}`;
+        let reporter = this.reporterPath ? `--reporter ${this.reporterPath}` : '';
+        return `${environmentVariables}node_modules/.bin/nightwatch -e ${environments} ${testCommand[this.type](this.tests)} ${reporter}`;
     }
 
     isValid(){
         return this.environments.length && this.tests.length;
+    }
+
+    setReporterPath(path){
+        this.reporterPath = path;
     }
 
     static cronCommandFunction(command) {

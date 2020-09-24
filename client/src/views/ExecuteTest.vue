@@ -1,9 +1,9 @@
 <template>
-    <v-container fluid class="execute-test-main">
+    <div class="execute-test-main">
         <Dashboard :output="command">
             <FormTests @onUpdate="onTestUpdated" @onTestResults="setTestResults" />
         </Dashboard>
-    </v-container>
+    </div>
 </template>
 
 <script>

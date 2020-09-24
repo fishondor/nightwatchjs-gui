@@ -36,7 +36,7 @@
                 </v-row>
                 <v-row v-if="formValues.type=='single'">
                     <v-col>
-                        <v-radio-group v-model="formValues.selectedTest" v-on:change="onFormChanged">
+                        <v-radio-group v-model="formValues.selectedTest" v-on:change="onFormChanged" class="mt-0 pt-0">
                             <v-treeview
                                 activatable
                                 color="info"

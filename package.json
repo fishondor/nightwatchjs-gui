@@ -25,6 +25,7 @@
     "nodemon": "^2.0.4"
   },
   "dependencies": {
+    "pm2": "^4.4.1",
     "yargs": "^15.4.1"
   }
 }

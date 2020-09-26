@@ -1,3 +1,7 @@
+const {
+    argv
+} = require('yargs');
+
 var NWJSGUI = require('../NightwatchJSGUI');
 
-new NWJSGUI();
+new NWJSGUI(argv);

@@ -50,9 +50,12 @@ Nightwatch GUI will call this function with the following arguments:\
 Nightwatch GUI uses [nedb](https://www.npmjs.com/package/nedb) library for DB management. The data will be saved to the file specified in this argument.
 
 #### <a name="reporter"></a>reporter
-By default nightwatchjs-gui will save reports to db and parse theme in reports page. You can set your own reporter as described in [Nightwatchjs documentation](https://github.com/nightwatchjs/nightwatch-docs/blob/master/guide/extending-nightwatch/custom-reporter.md). This argument will be used as argument in the test command.
+By default nightwatchjs-gui will save reports to db and parse them in reports page. You can set your own reporter as described in [Nightwatchjs documentation](https://github.com/nightwatchjs/nightwatch-docs/blob/master/guide/extending-nightwatch/custom-reporter.md). This argument will be used directly in the test command.
 
 ## Development
 * Clone this repo (recommended into a nightwatch js project)
 * run `npm run start:local` - this will start local server on port `8080` and vue.js project on port `4200`
 * Open `localhost:4200`
+
+## Authentication
+This package does not implements authentication. One way to add authentication is to implement a proxy server that will handle authentication and pass requests to nightwatchjs-gui server. Example [here](https://github.com/fishondor/nightwatchjs-gui/tree/master/examples/firebase-auth-proxy) using firebase session-cookies

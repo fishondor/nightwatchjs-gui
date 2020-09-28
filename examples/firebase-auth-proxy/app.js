@@ -72,8 +72,6 @@ function savecookie(idtoken,res){
 
 
 function checkCookie(req,res,next){
-
-
 	const sessionCookie = req.cookies.__session || '';
 	admin.auth().verifySessionCookie(
 		sessionCookie, true).then((decodedClaims) => {
@@ -81,10 +79,8 @@ function checkCookie(req,res,next){
 			next();
 		})
 		.catch(error => {
-			// Session cookie is unavailable or invalid. Force user to login.
 			res.redirect('/login');
 		});
-
 }
 
 https.createServer({

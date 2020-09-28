@@ -69,6 +69,9 @@ class EnvironmentService{
 
         if(config.output_folder)
             this.TESTS_OUTPUT_DIRECTORY = config.output_folder;
+
+        if(constants.reporter)
+            this.REPORTER_PATH = reporter
     }
 
 }

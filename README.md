@@ -36,6 +36,7 @@ port|The port for the server to expose|String|8080
 configFilePath|Path to nightwatch configuration file. [Nightwatch documentation](https://nightwatchjs.org/gettingstarted/configuration/) [Read more](#configFilePath)|String|./nightwatch.conf.js OR nightwatch.json
 dbFilePath|This is where db file will be created [Read more](#dbFilePath)|String|./nightwatchjs-gui-db/cron\_jobs.db
 cronjobCallback|A callback function to run when test cronjob is done or a path to a file that exports this function [Read more](#cronjobCallback)|Function/String|System will log the result to console
+reporter|Path to reporter file. [Read more](#reporter)|String||
 
 #### <a name="configFilePath"></a>configFilePath
 Absolute path to your nightwatch project config file. This will be used to extract the paths to tests folders and testing environments (selenium etc.). Tests folders must be defined in this file although this property is optional for nightwatch, this is the way nightwatch-gui will know how to list your tests and tests groups.
@@ -47,6 +48,9 @@ Nightwatch GUI will call this function with the following arguments:\
 
 #### <a name="dbFilePath"></a>dbFilePath
 Nightwatch GUI uses [nedb](https://www.npmjs.com/package/nedb) library for DB management. The data will be saved to the file specified in this argument.
+
+#### <a name="reporter"></a>reporter
+By default nightwatchjs-gui will save reports to db and parse theme in reports page. You can set your own reporter as described in [Nightwatchjs documentation](https://github.com/nightwatchjs/nightwatch-docs/blob/master/guide/extending-nightwatch/custom-reporter.md). This argument will be used as argument in the test command.
 
 ## Development
 * Clone this repo (recommended into a nightwatch js project)

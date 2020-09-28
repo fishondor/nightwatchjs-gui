@@ -182,7 +182,7 @@ export default {
         },
         runTest: async function(){
             this.loading = true;
-            let response = await this.$serverService.runTest(this.toTestObject(this.formValues).getCommand());
+            let response = await this.$serverService.runTest(this.toTestObject(this.formValues));
             this.$emit('onTestResults', response);
             this.loading = false;
         },

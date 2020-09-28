@@ -58,4 +58,5 @@ By default nightwatchjs-gui will save reports to db and parse them in reports pa
 * Open `localhost:4200`
 
 ## Authentication
-This package does not implements authentication. One way to add authentication is to implement a proxy server that will handle authentication and pass requests to nightwatchjs-gui server. Example [here](https://github.com/fishondor/nightwatchjs-gui/tree/master/examples/firebase-auth-proxy) using firebase session-cookies
+This package does not implements authentication. One way to add authentication is to implement a proxy server that will handle authentication and pass requests to nightwatchjs-gui server.
+Example [here](https://github.com/fishondor/nightwatchjs-gui/tree/master/examples/firebase-auth-proxy)

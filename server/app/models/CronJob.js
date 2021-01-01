@@ -1,8 +1,5 @@
 const axios = require('axios');
 
-/* const {
-    executeCommand
-} = require('../providers/utils'); */
 const TestModel = require('./Test');
 
 class NWCronJob{
@@ -28,17 +25,6 @@ class NWCronJob{
                 {test: context.test}
             );
             callback(results, context);
-        }
-    }
-
-    get callbackFunction(){
-        let title = this.title;
-        let tags = this.tags;
-        return function(results){
-            console.log("Job finished");
-            console.log("Results", results);
-            console.log("Tags", tags);
-            console.log("Job title", title);
         }
     }
 

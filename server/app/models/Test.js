@@ -44,21 +44,6 @@ class Test{
     setReporterPath(path){
         this.reporterPath = path;
     }
-
-    static cronCommandFunction(command) {
-        return function(onComplete){
-            /* executeCommand(`cd .. && ${command}`)
-                .then(
-                    result => onComplete(result)
-                ); */
-            console.log("Starting job", command);
-            onComplete("This is the result");
-        }
-    }
-
-    static cronCommandCompleteFunction(result) {
-        console.log(`Finished job`, result);
-    }
     
     static fromJSON(testJSON){
         return new Test(

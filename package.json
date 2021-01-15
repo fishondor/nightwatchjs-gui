@@ -1,10 +1,14 @@
 {
   "name": "nightwatchjs-gui",
   "version": "1.0.0",
-  "description": "",
+  "description": "NightwatchJS GUI implementation for executing tests and manage tests cron jobs",
   "main": "NightwatchJSGUI.js",
   "bin": {
     "nightwatchjs-gui": "./bin/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fishondor/nightwatchjs-gui.git"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -15,9 +19,9 @@
     "build:server": "cd server && npm install",
     "postinstall": "npm run build:client && npm run build:server"
   },
-  "author": "Ariel Fisher",
-  "license": "MIT",
-  "homepage": "https://github.com/fishondor/nightwatch-gui",
+  "author": "Ariel Fisher <fishondor@gmail.com>",
+  "license": "ISC",
+  "homepage": "https://github.com/fishondor/nightwatchjs-gui.git",
   "devDependencies": {
     "@vue/cli": "^4.4.6",
     "@vue/cli-service-global": "^4.4.6",

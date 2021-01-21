@@ -9,7 +9,8 @@ var {
     CONFIG_FILE_PATH,
     TESTS_DIRECTORIES,
     TESTS_OUTPUT_DIRECTORY,
-    REPORTER_PATH
+    REPORTER_PATH,
+    SERVER_PORT
 } = require('./constants');
 const Logger = require('./Logger');
 var logger = new Logger('Environment Service');
@@ -17,17 +18,15 @@ var logger = new Logger('Environment Service');
 class EnvironmentService{
 
     constructor(constants){
-        this.constants = constants;
+        this.constants = constants || {};
         this.PROJECT_ROOT_DIRECTORY = PROJECT_ROOT_DIRECTORY;
-        this.DB_FILE_PATH = DB_FILE_PATH;
-        this.TESTS_DIRECTORIES = TESTS_DIRECTORIES;
-        this.CRONJOB_CALLBACK_FUNCTION = false;
-        this.TESTS_OUTPUT_DIRECTORY = `${this.PROJECT_ROOT_DIRECTORY}/${path.basename(TESTS_OUTPUT_DIRECTORY)}`;
-        this.REPORTER_PATH = REPORTER_PATH;
-        this.setProperties(constants);
+        this.DB_FILE_PATH = this.constants.dbFilePath || DB_FILE_PATH;
+        this.REPORTER_PATH = this.constants.reporter || REPORTER_PATH;
+        this.SERVER_PORT = this.constants.port || SERVER_PORT;
+        this.setPropertiesFromConfigFile(this.constants);
     }
 
-    setProperties(constants = {}){
+    setPropertiesFromConfigFile(constants = {}){
         if(!constants.configFilePath && !CONFIG_FILE_PATH)
             throw new Error(`Config file was not found as ${CONFIG_JSON_FILE_PATH} or ${CONFIG_JS_FILE_PATH}. Please provide valid path to your nightwatch configuration file`);
 
@@ -38,8 +37,8 @@ class EnvironmentService{
 
         let config = require(this.configFilePath);
 
-        if(config.src_folders && Array.isArray(config.src_folders) && config.src_folders.length)
-            this.TESTS_DIRECTORIES = config.src_folders.map(item => `${PROJECT_ROOT_DIRECTORY}/${item}`);
+        this.TESTS_DIRECTORIES = (config.src_folders && Array.isArray(config.src_folders) && config.src_folders.length) ?
+            config.src_folders.map(item => `${PROJECT_ROOT_DIRECTORY}/${item}`) : TESTS_DIRECTORIES;
 
         this.TESTS_DIRECTORIES.map(
             directory => {
@@ -47,9 +46,6 @@ class EnvironmentService{
                     throw new Error(`Could not find tests src folders at ${directory}. Please make sure you define this source in your nightwatch config file correctly or use default 'tests' folder`);
             }
         )
-
-        if(constants.dbFilePath)
-            this.DB_FILE_PATH = constants.dbFilePath;
 
         if(!config.test_settings)
             throw new Error('Tests settings is not defined in config file');
@@ -67,11 +63,7 @@ class EnvironmentService{
                 throw new Error(`Exported callback must be of type function. file ${constants.cronjobCallback} exports type ${typeof this.CRONJOB_CALLBACK}`);
         }
 
-        if(config.output_folder)
-            this.TESTS_OUTPUT_DIRECTORY = config.output_folder;
-
-        if(constants.reporter)
-            this.REPORTER_PATH = reporter
+        this.TESTS_OUTPUT_DIRECTORY = config.output_folder || `${this.PROJECT_ROOT_DIRECTORY}/${path.basename(TESTS_OUTPUT_DIRECTORY)}`;
     }
 
 }

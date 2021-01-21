@@ -4,14 +4,15 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const Logger = require('./providers/Logger');
+const Environment = require('./providers/Environment')();
 
 const logger = new Logger('Server');
 
 class NWGUIServer{
 
-    constructor(args = {}){
+    constructor(){
         this.app = express();
-        this.port = args.port || '8080';
+        this.port = Environment.SERVER_PORT;
     }
 
     start(){

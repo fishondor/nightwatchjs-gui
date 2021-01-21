@@ -16,6 +16,8 @@ const TESTS_OUTPUT_DIRECTORY = process.cwd() + '/nightwatchjs-gui-reports';
 
 const REPORTER_PATH = `${__dirname}/reporter.js`;
 
+const SERVER_PORT = '8080';
+
 module.exports = {
     PROJECT_ROOT_DIRECTORY,
     DB_FILE_PATH,
@@ -24,5 +26,6 @@ module.exports = {
     CONFIG_FILE_PATH,
     TESTS_DIRECTORIES,
     TESTS_OUTPUT_DIRECTORY,
-    REPORTER_PATH
+    REPORTER_PATH,
+    SERVER_PORT
 }

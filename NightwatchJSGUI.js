@@ -5,7 +5,7 @@ class NightwatchJSGUI{
     
     constructor(args = {}){
         EnvironmentService(args);
-        let server = new Server(args);
+        let server = new Server();
         server.start();
     }
 

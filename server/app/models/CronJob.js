@@ -2,6 +2,8 @@ const axios = require('axios');
 
 const TestModel = require('./Test');
 
+const Environment = require('../providers/Environment')();
+
 class NWCronJob{
 
     constructor(expression, test, title = '', options = {}){
@@ -21,7 +23,7 @@ class NWCronJob{
     get cronExecuteFunction(){
         let context = this;
         return async function(callback){
-            let results = await axios.post('http://localhost:8080/api/run-test',
+            let results = await axios.post(`http://localhost:${Environment.SERVER_PORT}/api/run-test`,
                 {test: context.test}
             );
             callback(results, context);

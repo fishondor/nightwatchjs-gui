@@ -1,6 +1,4 @@
-const {
-    DB_FILE_PATH
-} = require('./Environment')();
+const Environment = require('./Environment')();
 const DBService = require('./Database');
 const Logger = require('./Logger');
 
@@ -8,7 +6,7 @@ class TestsOutputService{
 
     constructor(){
         this.logger = new Logger("TestsOutput service");
-        this.db = new DBService(`${DB_FILE_PATH}/reports.db`);
+        this.db = new DBService(`${Environment.DB_FILE_PATH}/reports.db`);
         this.db.setExpiration(604800);
     }
 
@@ -19,7 +17,7 @@ class TestsOutputService{
                 this.logger.error(`Invalid response in saving report to DB: ${newDoc}`);
                 return false;
             }
-            this.logger.info(`Successfully saved report`, newDoc);
+            this.logger.info(`Successfully saved report`);
     
             return newDoc;
         }catch(err){

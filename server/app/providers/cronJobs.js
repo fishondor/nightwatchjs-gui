@@ -4,17 +4,14 @@ const DBService = require('./Database');
 const CronJobModel = require('../models/CronJob');
 const Logger = require('./Logger');
 
-const {
-    DB_FILE_PATH,
-    CRONJOB_CALLBACK
-} = require('./Environment')();
+const Environment = require('./Environment')();
 
 class CronJobsService{
 
     constructor(){
         this.logger = new Logger("CronJobs service");
         this.cronJobManager = new CronJobManager();
-        this.db = new DBService(`${DB_FILE_PATH}/cron_jobs.db`);
+        this.db = new DBService(`${Environment.DB_FILE_PATH}/cron_jobs.db`);
     }
 
     async registerJob(doc){
@@ -73,7 +70,7 @@ class CronJobsService{
             job.cronExecuteFunction,
             {
                 start: false, 
-                onComplete: CRONJOB_CALLBACK || function(results, cronjob){
+                onComplete: Environment.CRONJOB_CALLBACK || function(results, cronjob){
                     logger.info(`Cronjob ${cronjob._id} is complete`, `Results: ${results}`, `Cronjob: ${JSON.stringify(cronjob)}`);
                 }, 
             }

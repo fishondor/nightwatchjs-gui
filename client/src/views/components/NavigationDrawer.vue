@@ -3,7 +3,9 @@
         app
         dark
         clipped
-        expand-on-hover>
+        expand-on-hover
+        disable-resize-watcher
+        permanent>
         <v-list
           dense
           nav

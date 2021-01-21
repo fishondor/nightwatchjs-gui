@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import axios from 'axios';
 
-import CronJob from '../../../shared/CronJob';
+import CronJob from '../models/CronJob';
 
 class ServerService{
 
@@ -83,6 +83,10 @@ class ServerService{
 
     getLogFilesList(){
         return this.getData('reports', "Could not get reports");
+    }
+
+    getTestCommand(test){
+        return this.postData('/tests/command', {test: test}, "Error generating test command");
     }
 
 }

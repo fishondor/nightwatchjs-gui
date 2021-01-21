@@ -65,7 +65,7 @@ import FormTests from './components/FormTests';
 import FormCronJob from './components/FormCronJob';
 import Dashboard from './layouts/Dashboard';
 
-import CronJob from '../../../shared/CronJob';
+import CronJob from '../models/CronJob';
 
 export default {
     components: {
@@ -82,9 +82,14 @@ export default {
         e1: 1
     }),
     methods: {
-        onTestUpdated: function(test){
+        onTestUpdated: async function(test){
             this.test = test;
-            this.command = this.test ? this.test.getCommand() : 'No valid command available yet'
+            if(!this.test){
+                this.command = 'No valid command available yet';
+                return;
+            }
+            let command = await this.$serverService.getTestCommand(this.test);
+            this.command = command;
         },
         onCronUpdated: function(cron){
             this.cron = cron;

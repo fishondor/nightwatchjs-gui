@@ -1,12 +1,3 @@
-const testCommand = {
-    groups: (tests) => {
-        return `--group ${tests.join(',')}`;
-    },
-    single: (test) => {
-        return `--test ${test}`;
-    }
-}
-
 class Test{
 
     constructor(type, tests, environments, args = {}){
@@ -23,18 +14,7 @@ class Test{
     }
 
     getCommand(){
-        let environmentVariables = this.environmentVariables.reduce(
-            (variables, item) => {
-                if(!item.name && !item.value)
-                    return variables;
-                variables += `${item.name}=${item.value} `;
-                return variables;
-            },
-            ''
-        );
-        let environments = this.environments.join(',');
-        let reporter = this.reporterPath ? `--reporter ${this.reporterPath}` : '';
-        return `${environmentVariables}node_modules/.bin/nightwatch -e ${environments} ${testCommand[this.type](this.tests)} ${reporter}`;
+        return Test.testCommand(this);
     }
 
     isValid(){
@@ -52,6 +32,29 @@ class Test{
             testJSON.environments,
             {environmentVariables: testJSON.environmentVariables}
         )
+    }
+
+    static testCommand(test){
+        let types = {
+            groups: (tests) => {
+                return `--group ${tests.join(',')}`;
+            },
+            single: (test) => {
+                return `--test ${test}`;
+            }
+        }
+        let environmentVariables = test.environmentVariables.reduce(
+            (variables, item) => {
+                if(!item.name && !item.value)
+                    return variables;
+                variables += `${item.name}=${item.value} `;
+                return variables;
+            },
+            ''
+        );
+        let environments = test.environments.join(',');
+        let reporter = test.reporterPath ? `--reporter ${test.reporterPath}` : '';
+        return `${environmentVariables}node_modules/.bin/nightwatch -e ${environments} ${types[test.type](test.tests)} ${reporter}`;
     }
 
 }

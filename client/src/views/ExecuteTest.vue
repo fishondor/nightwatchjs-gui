@@ -20,10 +20,11 @@ export default {
         command: 'No valid command available yet'
     }),
     methods: {
-        onTestUpdated: function(test){
+        onTestUpdated: async function(test){
             if(test){
                 this.test = test;
-                this.command = this.test.getCommand();
+                let command = await this.$serverService.getTestCommand(this.test);
+                this.command = command;
             }else{
                 this.command = 'No valid command available yet'
             }

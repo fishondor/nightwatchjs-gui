@@ -120,7 +120,7 @@
 <script>
 import { mapState } from 'vuex';
 
-import Test from '../../../../shared/Test';
+import Test from '../../models/Test';
 
 import {
     createPathString,

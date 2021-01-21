@@ -20,11 +20,7 @@
                 >
                     mdi-delete
                 </v-icon>
-            </template>
-            <template v-slot:expanded-item="{ headers, item }">
-                <td :colspan="headers.length">
-                    <CommandlineOutput :output="item.test.getCommand()" :wrapText="true"/>
-                </td>
+                <CommandDialog :test="item.test" />
             </template>
             <template v-slot:item.running="{ item }">
                 <v-tooltip 
@@ -57,11 +53,11 @@
 <script>
 import { mapState } from 'vuex'
 
-import CommandlineOutput from '@/views/components/CommandlineOutput'
+import CommandDialog from './CommadDialog'
 
 export default {
     components: {
-        CommandlineOutput
+        CommandDialog
     },
     computed: {
         ...mapState({
@@ -79,11 +75,15 @@ export default {
                 { text: 'Tags', value: 'tags'},
                 { text: 'Status', value: 'running' },
                 { text: '', value: 'actions' },
-                { text: '', value: 'data-table-expand' },
+                {}
             ]
         }
     },
     methods: {
+        getCommand: async function(test){
+            let command = await this.$serverService.getTestCommand(test);
+            return command;
+        },
         deleteItem: async function(item){
             try{
                 let itemsDeleted = await this.$serverService.deleteCronJob(item);

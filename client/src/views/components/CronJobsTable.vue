@@ -3,10 +3,7 @@
         <v-data-table
             :headers="headers"
             :items="jobs"
-            :single-expand="false"
-            :expanded.sync="expanded"
             item-key="_id"
-            show-expand
         >
             <template v-slot:item.tags="{ item }">
                 <v-chip v-for="tag in item.tags" :key="tag" class="mr-1" color="primary">
@@ -66,16 +63,13 @@ export default {
     },
     data () {
         return {
-            expanded: [],
-            singleExpand: false,
             headers: [
                 { text: 'ID', value: '_id' },
                 { text: 'Title', value: 'title' },
                 { text: 'Expression', value: 'expression' },
                 { text: 'Tags', value: 'tags'},
                 { text: 'Status', value: 'running' },
-                { text: '', value: 'actions' },
-                {}
+                { text: '', value: 'actions' }
             ]
         }
     },

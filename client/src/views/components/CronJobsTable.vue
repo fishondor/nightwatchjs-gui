@@ -5,6 +5,9 @@
             :items="jobs"
             item-key="_id"
         >
+            <template v-slot:item._id="{ item }">
+                <CommandDialog :test="item.test" :text="item._id"/>
+            </template>
             <template v-slot:item.tags="{ item }">
                 <v-chip v-for="tag in item.tags" :key="tag" class="mr-1" color="primary">
                     {{tag}}
@@ -17,7 +20,6 @@
                 >
                     mdi-delete
                 </v-icon>
-                <CommandDialog :test="item.test" />
             </template>
             <template v-slot:item.running="{ item }">
                 <v-tooltip 

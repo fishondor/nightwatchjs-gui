@@ -2,16 +2,14 @@
     <v-dialog
         v-model="dialog"
         >
-        <template v-slot:activator="{ on, attrs }">
-            <v-btn
-                class="ma-2"
-                text
-                icon
-                v-bind="attrs"
-                v-on="on"
+        <template v-slot:activator="{ }">
+            <v-icon
+                small
+                class="ml-2"
+                @click="dialog = true"
             >
-                <v-icon>mdi-code-tags</v-icon>
-            </v-btn>
+                mdi-code-tags
+            </v-icon>
         </template>
 
         <v-card>
@@ -49,7 +47,6 @@ export default {
     watch: {
         async dialog(visible) {
             if (visible) {
-                console.log("test", this.test);
                 let command = await this.$serverService.getTestCommand(this.test);
                 this.command = command;
             }

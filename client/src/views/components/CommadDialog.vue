@@ -3,13 +3,21 @@
         v-model="dialog"
         >
         <template v-slot:activator="{ }">
-            <v-icon
+            <v-icon v-if="!text"
                 small
                 class="ml-2"
                 @click="dialog = true"
             >
                 mdi-code-tags
             </v-icon>
+            <v-btn v-else 
+                @click="dialog = true"
+                color="accent"
+                text
+                class="text-none"
+            >
+                {{text}}
+            </v-btn>
         </template>
 
         <v-card>
@@ -37,6 +45,7 @@ export default {
     },
     props: {
         test: null,
+        text: String
     },
     data () {
         return {

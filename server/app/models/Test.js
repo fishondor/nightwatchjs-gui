@@ -13,8 +13,8 @@ class Test{
         this.reporterPath = args.reporterPath;
     }
 
-    getCommand(){
-        return Test.testCommand(this);
+    getCommand(nightwatchPath){
+        return Test.testCommand(this, nightwatchPath);
     }
 
     isValid(){
@@ -34,7 +34,7 @@ class Test{
         )
     }
 
-    static testCommand(test){
+    static testCommand(test, nightwatchPath){
         let types = {
             groups: (tests) => {
                 return `--group ${tests.join(',')}`;
@@ -54,7 +54,7 @@ class Test{
         );
         let environments = test.environments.join(',');
         let reporter = test.reporterPath ? `--reporter ${test.reporterPath}` : '';
-        return `${environmentVariables}node_modules/.bin/nightwatch -e ${environments} ${types[test.type](test.tests)} ${reporter}`;
+        return `${environmentVariables}${nightwatchPath} -e ${environments} ${types[test.type](test.tests)} ${reporter}`;
     }
 
 }

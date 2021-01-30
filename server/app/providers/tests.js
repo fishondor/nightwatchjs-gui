@@ -12,7 +12,10 @@ const {
 } = require('./utils');
 
 const runTest = async (test) => {
-    let result = await executeCommand(test.getCommand(), Environment.PROJECT_ROOT_DIRECTORY);
+    let result = await executeCommand(
+        test.getCommand(Environment.NIGHTWATCH_BINARY_PATH), 
+        Environment.PROJECT_ROOT_DIRECTORY
+    );
     return ansi_up.ansi_to_html(result);
 }
 
@@ -36,7 +39,7 @@ const api = {
 
     getTestsCommand: (req, res) => {
         let test = Test.fromJSON(req.body.test);
-        let testCommand = Test.testCommand(test);
+        let testCommand = Test.testCommand(test, Environment.NIGHTWATCH_BINARY_PATH);
         res.json(testCommand);
     }
 }

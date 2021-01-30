@@ -12,7 +12,7 @@ const {
 } = require('./utils');
 
 const runTest = async (test) => {
-    let result = await executeCommand(`cd ${Environment.PROJECT_ROOT_DIRECTORY} && ${test.getCommand()}`);
+    let result = await executeCommand(test.getCommand(), Environment.PROJECT_ROOT_DIRECTORY);
     return ansi_up.ansi_to_html(result);
 }
 

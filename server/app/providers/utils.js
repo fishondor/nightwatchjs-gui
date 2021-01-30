@@ -4,11 +4,11 @@ const Logger = require('./Logger');
 
 const logger = new Logger("Utils");
 
-const executeCommand = (command) => {
-    console.log("Executing command", command);
+const executeCommand = (command, path) => {
+    logger.info("executing command", command);
     return new Promise(
         (resolve) => {
-            exec(command, function(error, stdout){ 
+            exec(command, {cwd: path || process.cwd()}, function(error, stdout){ 
                 if(error)
                     logger.error(error);
                 resolve(stdout) });

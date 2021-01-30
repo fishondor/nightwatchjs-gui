@@ -10,7 +10,8 @@ var {
     TESTS_DIRECTORIES,
     TESTS_OUTPUT_DIRECTORY,
     REPORTER_PATH,
-    SERVER_PORT
+    SERVER_PORT,
+    NIGHTWATCH_BINARY_PATH
 } = require('./constants');
 const Logger = require('./Logger');
 var logger = new Logger('Environment Service');
@@ -20,6 +21,7 @@ class EnvironmentService{
     constructor(constants){
         this.constants = constants || {};
         this.PROJECT_ROOT_DIRECTORY = PROJECT_ROOT_DIRECTORY;
+        this.NIGHTWATCH_BINARY_PATH = NIGHTWATCH_BINARY_PATH;
         this.DB_FILE_PATH = this.constants.dbFilePath || DB_FILE_PATH;
         this.REPORTER_PATH = this.constants.reporter || REPORTER_PATH;
         this.SERVER_PORT = this.constants.port || SERVER_PORT;

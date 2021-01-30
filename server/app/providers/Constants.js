@@ -17,6 +17,8 @@ const TESTS_OUTPUT_DIRECTORY = process.cwd() + '/nightwatchjs-gui-reports';
 
 const REPORTER_PATH = path.resolve(__dirname, 'reporter.js');
 
+const NIGHTWATCH_BINARY_PATH = path.resolve(PROJECT_ROOT_DIRECTORY, 'node_modules/.bin/nightwatch');
+
 const SERVER_PORT = '8080';
 
 module.exports = {
@@ -28,5 +30,6 @@ module.exports = {
     TESTS_DIRECTORIES,
     TESTS_OUTPUT_DIRECTORY,
     REPORTER_PATH,
-    SERVER_PORT
+    SERVER_PORT,
+    NIGHTWATCH_BINARY_PATH
 }

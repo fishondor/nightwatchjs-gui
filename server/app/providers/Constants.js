@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 
 var PROJECT_ROOT_DIRECTORY = process.cwd();
 if(process.env.ENV && process.env.ENV == 'dev') PROJECT_ROOT_DIRECTORY += '/..';
@@ -14,7 +15,7 @@ const TESTS_DIRECTORIES = [`${PROJECT_ROOT_DIRECTORY}/tests`];
 
 const TESTS_OUTPUT_DIRECTORY = process.cwd() + '/nightwatchjs-gui-reports';
 
-const REPORTER_PATH = `${__dirname}/reporter.js`;
+const REPORTER_PATH = path.resolve(__dirname, 'reporter.js');
 
 const SERVER_PORT = '8080';
 

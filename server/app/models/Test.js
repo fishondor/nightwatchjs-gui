@@ -24,6 +24,10 @@ class Test{
     setReporterPath(path){
         this.reporterPath = path;
     }
+
+    setSystemEnvVars(envVars){
+        this.systemEnvVars = envVars;
+    }
     
     static fromJSON(testJSON){
         return new Test(
@@ -43,7 +47,16 @@ class Test{
                 return `--test ${test}`;
             }
         }
-        let environmentVariables = test.environmentVariables.reduce(
+        let environmentVariables = Test.createEnvVarsString(test.environmentVariables);
+        if(test.systemEnvVars)
+            environmentVariables += " " + Test.createEnvVarsString(test.systemEnvVars);
+        let environments = test.environments.join(',');
+        let reporter = test.reporterPath ? `--reporter ${test.reporterPath}` : '';
+        return `${environmentVariables}${nightwatchPath} -e ${environments} ${types[test.type](test.tests)} ${reporter}`;
+    }
+
+    static createEnvVarsString(envVars){
+        return envVars.reduce(
             (variables, item) => {
                 if(!item.name && !item.value)
                     return variables;
@@ -52,9 +65,6 @@ class Test{
             },
             ''
         );
-        let environments = test.environments.join(',');
-        let reporter = test.reporterPath ? `--reporter ${test.reporterPath}` : '';
-        return `${environmentVariables}${nightwatchPath} -e ${environments} ${types[test.type](test.tests)} ${reporter}`;
     }
 
 }

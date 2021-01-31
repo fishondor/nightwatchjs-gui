@@ -2,6 +2,9 @@
 const {
     argv
 } = require('yargs');
+const path = require('path');
+
+const serviceName = 'nightwatch-gui-server';
 
 if(argv.d){
     var pm2 = require('pm2');
@@ -12,8 +15,8 @@ if(argv.d){
         }
     });
     pm2.start({
-        script    : `${__dirname}/../server/start-server.js`,
-        name: 'nightwatch-gui-server',
+        script: path.resolve(`${__dirname}/../server/start-server.js`),
+        name: serviceName,
         args: Object.keys(argv).map(
             key => `--${key}=${argv[key]}`
         )
@@ -29,7 +32,7 @@ if(argv.d){
           process.exit(2);
         }
     });
-    pm2.stop('nightwatch-gui-server');
+    pm2.stop(serviceName);
     pm2.disconnect();
 }else{
     var NWJSGUI = require('../NightwatchJSGUI');

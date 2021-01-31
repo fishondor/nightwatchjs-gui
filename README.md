@@ -52,6 +52,13 @@ Nightwatch GUI uses [nedb](https://www.npmjs.com/package/nedb) library for DB ma
 #### <a name="reporter"></a>reporter
 By default nightwatchjs-gui will save reports to db and parse them in reports page. You can set your own reporter as described in [Nightwatchjs documentation](https://github.com/nightwatchjs/nightwatch-docs/blob/master/guide/extending-nightwatch/custom-reporter.md). This argument will be used directly in the test command.
 
+### Detach mode
+To run as a background service use detach mode by adding ```-d``` flag. This will enable keeping nightwatchjs-gui alive after closing the command session.
+
+To stop the service run ```nightwatchjs-gui --stop```
+
+This package uses [pm2](https://www.npmjs.com/package/pm2) for running as a service. Checkout it's documentation for more options
+
 ## Development
 * Clone this repo (recommended into a nightwatch js project)
 * run `npm run start:local` - this will start local server on port `8080` and vue.js project on port `4200`

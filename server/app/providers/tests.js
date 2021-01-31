@@ -23,6 +23,7 @@ const api = {
     runTest: async (req, res) => {
         let test = Test.fromJSON(req.body.test);
         test.setReporterPath(Environment.REPORTER_PATH);
+        test.setSystemEnvVars([{name: 'NWJSGUI_SERVER_PORT', value: Environment.SERVER_PORT}]);
         let results = await runTest(test);
         return res.json(results);
     },

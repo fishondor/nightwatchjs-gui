@@ -8,7 +8,7 @@ module.exports = {
   write : async function(results, options, done) {
 
     try{
-        await axios.post('http://localhost:8080/api/report', 
+        await axios.post(`http://localhost:${process.env.NWJSGUI_SERVER_PORT}/api/report`, 
         {
             report: JSON.stringify(results),
             options: JSON.stringify(options),

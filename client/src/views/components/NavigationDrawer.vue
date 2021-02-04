@@ -10,34 +10,41 @@
           dense
           nav
           class="py-0">
-          <v-list-item link>
+          <v-list-item v-for="(menuItem, index) in menuItems" :key="index" link :to=menuItem.route>
             <v-list-item-content>
-              <v-list-item-title><router-link to="/test">Execute Test</router-link></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item link>
-            <v-list-item-content>
-              <v-list-item-title><router-link to="/cron-jobs">Cron Jobs</router-link></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item link>
-            <v-list-item-content>
-              <v-list-item-title><router-link to="/cron-jobs/new" append>New Cron Job</router-link></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item link>
-            <v-list-item-content>
-              <v-list-item-title><router-link to="/reports" append>Reports</router-link></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item link>
-            <v-list-item-content>
-              <v-list-item-title><router-link to="/about">About</router-link></v-list-item-title>
+              <v-list-item-title>{{menuItem.label}}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
 </template>
+
+<script>
+const menuItems = [
+  {
+    label: "Execute Test",
+    route: "/test"
+  },{
+    label: "Cron Jobs",
+    route: "/cron-jobs"
+  },{
+    label: "New Cron Job",
+    route: "/cron-jobs/new"
+  },{
+    label: "Reports",
+    route: "/reports"
+  },{
+    label: "About",
+    route: "/about"
+  }
+]
+
+export default {
+  data: () => ({
+        menuItems: menuItems
+    }),
+}
+</script>
 
 <style lang="scss" scoped>
 .v-application a{

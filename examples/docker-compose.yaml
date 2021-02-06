@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  nightwatchjs-gui:
+    image: fishondor/nightwatchjs-gui
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/var/nightwatch
+  selenium-server:
+    image: selenium/standalone-chrome-debug
+    shm_size: '2gb'
+    ports:
+      - 4444:4444

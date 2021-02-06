@@ -59,6 +59,14 @@ To stop the service run ```nightwatchjs-gui --stop```
 
 This package uses [pm2](https://www.npmjs.com/package/pm2) for running as a service. Checkout it's documentation for more options
 
+## Docker
+This project is also available as a docker image in [fishondor/nightwatchjs-gui](https://hub.docker.com/repository/docker/fishondor/nightwatchjs-gui).
+
+Running the server from docker container will require configuring testing environments for local selenium testing. Running tests remotely (browserstack, crosssbrowsertesting) will have no difference though.
+
+To run the image, map desired port to 8080 and mount nightwtch project folder to ```/var/nightwatch```. Example: ```docker run -p 8080:8080 -v "$(pwd)"/:/var/nightwatch fishondor/nightwatchjs-gui```.
+Example for implementation with selenium-chrome-debug docker image using docker-compose, and nightwatch testing environment configuration can be found [here](examples/)
+
 ## Development
 * Clone this repo (recommended into a nightwatch js project)
 * run `npm run start:local` - this will start local server on port `8080` and vue.js project on port `4200`

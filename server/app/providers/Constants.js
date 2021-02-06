@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-var PROJECT_ROOT_DIRECTORY = process.cwd();
+var PROJECT_ROOT_DIRECTORY = process.env.PROJECT_ROOT_DIRECTORY || process.cwd();
 if(process.env.ENV && process.env.ENV == 'dev') PROJECT_ROOT_DIRECTORY += '/..';
 
 const DB_FILE_PATH = `${PROJECT_ROOT_DIRECTORY}/nightwatchjs-gui-db`;

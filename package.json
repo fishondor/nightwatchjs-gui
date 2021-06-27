@@ -1,6 +1,6 @@
 {
   "name": "nightwatchjs-gui",
-  "version": "1.0.1",
+  "version": "1.2.0",
   "description": "NightwatchJS GUI implementation for executing tests and manage tests cron jobs",
   "main": "NightwatchJSGUI.js",
   "bin": {

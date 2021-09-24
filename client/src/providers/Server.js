@@ -43,6 +43,10 @@ class ServerService{
         return this.getData('tests', "Could not get tests");
     }
 
+    getTestsList(){
+        return this.getData('tests/list', "Could not get tests list");
+    }
+
     getTestsEnvironments(){
         return this.getData('tests-environments', "Could not get tests environments");
     }

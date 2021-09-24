@@ -7,6 +7,7 @@ const testsOutputService = require('./providers/testsOutput');
 
 router.get( '/groups', testsService.api.getTestsTreeView );
 router.post( '/tests/command', testsService.api.getTestsCommand);
+router.get( '/tests/list', testsService.api.getTestsList);
 router.get( '/tests', testsService.api.getTestsTreeView );
 router.get( '/tests-environments', testsService.api.getTestEnvironments );
 router.post( '/run-test', testsService.api.runTest );

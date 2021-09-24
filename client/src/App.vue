@@ -36,6 +36,7 @@ export default {
         this.getTestGroups();
         this.getTestsEnvironments();
         this.getTests();
+        this.getTestsList();
     },
     methods: {
         getTestGroups: async function(){
@@ -45,6 +46,10 @@ export default {
         getTests: async function(){
           let tests = await this.$serverService.getTests();
           this.$store.commit('setTests', tests);
+        },
+        getTestsList: async function(){
+          let tests = await this.$serverService.getTestsList();
+          this.$store.commit('setTestsList', tests)
         },
         getTestsEnvironments: async function(){
           let testsEnvironments = await this.$serverService.getTestsEnvironments();

@@ -10,7 +10,8 @@ export default new Vuex.Store({
         testGroups: [],
         testsCronJobs: [],
         notification: {},
-        showLoader: false
+        showLoader: false,
+        testsList: []
     },
     mutations: {
         setTests(state, tests){
@@ -21,6 +22,9 @@ export default new Vuex.Store({
         },
         setTestGroups(state, testGroups){
             state.testGroups = testGroups;
+        },
+        setTestsList(state, testsList){
+            state.testsList = testsList;
         },
         setTestsCronJobs(state, jobs){
             state.testsCronJobs = jobs;
@@ -39,6 +43,7 @@ export default new Vuex.Store({
         tests: state => state.tests,
         testGroups: state => state.testGroups,
         testsEnvironments: state => state.testsEnvironments,
+        testsList: state => state.testsList,
         testsCronJobs: state => state.testsCronJobs,
         notification: state => state.notification,
         showLoader: state => state.showLoader

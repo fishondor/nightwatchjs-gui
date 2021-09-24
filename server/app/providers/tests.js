@@ -1,6 +1,5 @@
 var AU = require('ansi_up');
 const { TreeView } = require('node-treeview');
-const { flatten } = require('node-treeview/helper');
 
 const Test = require('../models/Test');
 
@@ -33,12 +32,6 @@ const api = {
         let treeView = new TreeView({relative: true, include: Environment.TESTS_DIRECTORIES});
         let treeViews = await treeView.process(Environment.PROJECT_ROOT_DIRECTORY);
         res.json(treeViews);
-    },
-
-    getTestsList: async (req, res) => {
-        let treeView = new TreeView({relative: true, include: Environment.TESTS_DIRECTORIES});
-        let treeViews = await treeView.process(Environment.PROJECT_ROOT_DIRECTORY);
-        res.json(flatten(treeViews));
     },
     
     getTestEnvironments: (req, res) => {

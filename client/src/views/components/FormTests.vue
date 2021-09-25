@@ -1,7 +1,6 @@
 <template>
     <v-form
-            ref="cronjobs-form"
-            lazy-validation
+            v-model="formValid"
     >
         <div>
             <v-btn color="primary" 
@@ -9,55 +8,38 @@
                 @click="runTest"
                 :loading="loading">Run this test now</v-btn>
         </div>
-        <div class="d-flex flex-sm-row flex-column">
-            <div class="flex-grow-1">
+        <v-container fluid>
+            <v-row>
+            <v-col>
                 <v-row>
                     <v-col>
-                        <v-radio-group v-model="formValues.type" row>
+                        <v-radio-group v-model="formValues.type" row @change="formValues.selectedTests = null">
                             <v-radio label="Group Tests" value="groups"></v-radio>
                             <v-radio label="Single Test" value="single"></v-radio>
                         </v-radio-group>
                     </v-col>
                 </v-row>
-                <v-row v-if="formValues.type=='groups'">
+                <v-row>
                     <v-col>
-                        <v-treeview
-                                v-model="formValues.selectedTestGroups"
-                                :items="testGroups"
-                                selection-type="independent"
-                                selectable
-                                return-object
-                                item-children="nodes"
-                                item-key="pathname"
-                                item-disabled="disabled"
-                                @input="onFormChanged"
-                            ></v-treeview>
+                    <h4>Select test {{formValues.type === "groups" ? "groups" : ""}}</h4>
+                        <v-autocomplete
+                            v-model="formValues.selectedTests"
+                            :items="testsList"
+                            label="Start typing and select"
+                            @change="onFormChanged"
+                            :multiple="formValues.type === 'groups'"
+                            small-chips
+                            outlined
+                            deletable-chips
+                            clearable
+                            item-text="pathname"
+                            item-value="pathname"
+                            :rules="formRules.tests"
+                        ></v-autocomplete>
                     </v-col>
                 </v-row>
-                <v-row v-if="formValues.type=='single'">
-                    <v-col>
-                        <v-radio-group v-model="formValues.selectedTest" v-on:change="onFormChanged" class="mt-0 pt-0">
-                            <v-treeview
-                                activatable
-                                color="info"
-                                :items="tests"
-                                item-children="nodes"
-                                return-object
-                                item-key="pathname"
-                            >
-                                <template v-slot:prepend="{ item }">
-                                    <v-radio
-                                        :label="''"
-                                        :value="item"
-                                        :disabled="item.disabled"
-                                    ></v-radio>
-                                </template>
-                            </v-treeview>
-                        </v-radio-group>
-                    </v-col>
-                </v-row>
-            </div>
-            <div class="flex-grow-1">
+            </v-col>
+            <v-col>
                 <v-row>
                     <v-col>
                     <h4>Tests environment</h4>
@@ -71,6 +53,7 @@
                             outlined
                             deletable-chips
                             clearable
+                            :rules="formRules.environments"
                         ></v-combobox>
                     </v-col>
                 </v-row>
@@ -112,8 +95,9 @@
                         <v-icon dark>mdi-plus</v-icon>
                     </v-btn>
                 </div>
-            </div>
-        </div>
+            </v-col>
+            </v-row>
+        </v-container>
     </v-form>
 </template>
 
@@ -123,12 +107,13 @@ import { mapState } from 'vuex';
 import Test from '../../models/Test';
 
 import {
-    createPathString,
-    disableNodeByType
+    disableNodeByType,
+    createListFromTreeview
 } from '../../providers/Utils';
 
 export default {
     data: () => ({
+        formValid: false,
         formValues: {
             selectedTestGroups: [],
             selectedTest: [],
@@ -136,9 +121,24 @@ export default {
             environmentVariables: [
                 {name: "", value: ""}
             ],
-            type: 'groups'
+            type: 'groups',
+            selectedTests: null
         },
-        loading: false
+        loading: false,
+        formRules: {
+            tests: [
+                v => 
+                    v !== null && 
+                    v != undefined && 
+                    (!Array.isArray(v) || !!v.length) || 
+                    "pleas select test or test groups"
+            ],
+            environments: [
+                v => 
+                    !!v.length || 
+                    "pleas select environments"
+            ],
+        }
     }),
     computed: {
         ...mapState({
@@ -153,23 +153,12 @@ export default {
                     group => disableNodeByType(group, 'file')
                 )
             },
+            testsList: function(state){
+                return createListFromTreeview(state.tests, this.formValues.type === "groups" ? 'dir' : 'file')
+            },
             variablesEnvironments: state => state.variablesEnvironments,
             testsEnvironments: state => state.testsEnvironments
-        }),
-        formValid: {
-            get(){
-                if(!this.formValues.selectedEnvironments.length)
-                    return false;
-                if(this.formValues.type == 'groups' && !this.formValues.selectedTestGroups.length)
-                    return false;
-                if(this.formValues.type == 'single' && !this.formValues.selectedTest)
-                    return false;
-                return true;
-            },
-            set(formValid){
-                return formValid
-            } 
-        }
+        })
     },
     methods: {
         onFormChanged: function(){
@@ -187,11 +176,9 @@ export default {
             this.loading = false;
         },
         toTestObject: function(formValues){
-            let tests = formValues.type == 'groups' ? formValues.selectedTestGroups.map(group => createPathString(group)) :
-                createPathString(formValues.selectedTest);
             return new Test(
                 formValues.type, 
-                tests, 
+                formValues.selectedTests, 
                 formValues.selectedEnvironments, 
                 { environmentVariables: formValues.environmentVariables }
             );

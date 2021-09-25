@@ -19,6 +19,8 @@ import AppBar from '@/views/components/AppBar';
 import Notification from '@/views/components/Notification';
 import Loader from './views/components/Loader';
 
+const APP_NAME = "Nightwatchjs-gui"
+
 export default {
     name: 'App',
 
@@ -33,6 +35,7 @@ export default {
       //
     }),
     created(){
+        document.title = APP_NAME
         this.getTestGroups();
         this.getTestsEnvironments();
         this.getTests();

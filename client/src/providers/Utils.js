@@ -19,8 +19,23 @@ const disableItemsByType = (items, type) => {
     return disabled;
 }
 
+const createListFromTreeview = (treeView, type) => {
+    return treeView.reduce(
+        (accumulator, current) => {
+            if(current.type === type)
+                accumulator.push(current.pathname)
+            if(current.type === 'dir'){
+                return accumulator.concat(createListFromTreeview(current.nodes, type))
+            }
+            return accumulator
+        },
+        []
+    )
+}
+
 export {
     createPathString,
     disableNodeByType,
-    disableItemsByType
+    disableItemsByType,
+    createListFromTreeview
 }
